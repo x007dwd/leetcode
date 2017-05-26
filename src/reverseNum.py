@@ -1,3 +1,4 @@
+
 class Solution(object):
     def reverse(self, x):
         """
@@ -8,9 +9,10 @@ class Solution(object):
         print x
         if not flag:
             x = -x
-        if x >= 2**31 - 1:
+        if x >= (1 << 31):
             return 0
-        print (2**31-1)
+        print (1 << 31)
+        print  ~(1 << 31)
         t = 0
         while x/10:
             t *= 10
@@ -18,6 +20,8 @@ class Solution(object):
             x /= 10
         t *= 10
         t += x % 10
+        if t >= (1 << 31):
+            return 0
         if not flag:
             t=-t
         return t
