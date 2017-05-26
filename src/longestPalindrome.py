@@ -11,14 +11,13 @@ class Solution(object):
         maxc = 0
         maxst=''
         sst = ''
-        print  sr
+        # print  sr
         for i in range(sz):
             for j in range(sz):
                 if s[i] == sr[j]:
                     sst += s[i]
                     cnt+=1
                 else:
-
                     if maxc < cnt:
                         maxc = cnt
                         maxst = sst
