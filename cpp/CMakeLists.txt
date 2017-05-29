@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project(leetcode)
+set(CMAKE_BUILD_TYPE Debug)
+add_executable(String src/String.cpp)
+add_executable(BinTree src/BinTree.cpp)
+add_executable(LinkList src/LinkList.cpp)
