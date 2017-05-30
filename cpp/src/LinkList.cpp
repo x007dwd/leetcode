@@ -12,7 +12,7 @@ struct ListNode {
   ListNode(int x) : val(x), next(NULL) {}
 };
 
-class Solution {
+class LiskListSolution {
 public:
   void deleteNode(ListNode *prev, ListNode *pToDel) {
     if (!prev || !pToDel) {
@@ -268,7 +268,7 @@ int main(int argc, char const *argv[]) {
     pre_node = node;
   }
 
-  Solution sol;
+  LiskListSolution sol;
   // sol.printall(head);
 
   cout << std::endl;
