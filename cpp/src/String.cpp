@@ -1,10 +1,36 @@
 #include <algorithm>
 #include <iostream>
 #include <limits.h>
+#include <stack>
 #include <string>
 
 class StringSolution {
 public:
+
+  bool isValid(std::string const &s) {
+    std::stack<char> st;
+    for (auto c : s) {
+      if (c == '[' || c == '(' || c == '{') {
+        st.push(c);
+      }
+      if (c == ']' || c == ')' || c == '}') {
+        if (st.empty()) {
+          return false;
+        }
+        char tmp = st.top();
+        if ((tmp == '[' && c == ']') || (tmp == '(' && c == ')') ||
+            (tmp == '{' && c == '}')) {
+          st.pop();
+        } else {
+          return false;
+        }
+      }
+    }
+    if (!st.empty()) {
+      return false;
+    }
+    return true;
+  }
   std::string addBinary(std::string a, std::string b) {
     std::string result;
     int carry = 0;
@@ -119,5 +145,7 @@ int main(int argc, char const *argv[]) {
   std::cout << sol.isPalindrome(".,") << std::endl;
   std::cout << "atoi\t" << sol.myAtoi("125") << std::endl;
   std::cout << " add Binary\t" << sol.addBinary("1010", "1011") << std::endl;
+  printf("const std::string &)))");
+  std::cout << "is valid closure " << sol.isValid("[(11111]") << '\n';
   return 0;
 }

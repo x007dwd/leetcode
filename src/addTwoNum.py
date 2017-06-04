@@ -82,4 +82,3 @@ l2.next.next = ListNode(7)
 
 s =Solution()
 print s.addTwoNumbers2(l1,l2)
-

@@ -3,8 +3,8 @@
 
 using namespace std;
 /**
-* Definition for singly-linked list.
-*/
+ * Definition for singly-linked list.
+ */
 
 struct ListNode {
   int val;
@@ -14,6 +14,34 @@ struct ListNode {
 
 class LiskListSolution {
 public:
+  ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
+    unsigned carry = 0;
+    ListNode *prev_node = NULL;
+    ListNode *current_node = NULL;
+    ListNode *p1_node = l1, *p2_node = l2;
+    while (p1_node != NULL || p2_node != NULL) {
+      int tmp = carry;
+      if (p1_node != NULL) {
+        tmp += p1_node->val;
+        p1_node = p1_node->next;
+      }
+      if (p2_node != NULL) {
+        tmp += p2_node->val;
+        p2_node = p2_node->next;
+      }
+      carry = tmp / 10;
+      current_node = new ListNode(0);
+      current_node->val = tmp % 10;
+      current_node->next = prev_node;
+      prev_node = current_node;
+    }
+    if (carry > 0) {
+      current_node = new ListNode(carry);
+      current_node->next = prev_node;
+      prev_node = current_node;
+    }
+    return prev_node;
+  }
   void deleteNode(ListNode *prev, ListNode *pToDel) {
     if (!prev || !pToDel) {
       return;
@@ -231,55 +259,102 @@ public:
       std::cout << pn->val << '\t';
       pn = pn->next;
     }
+    std::cout << '\n';
   }
+
+  ListNode *swapPairs(ListNode *head) {
+    ListNode *p1 = head;
+    ListNode *p2;
+    ListNode dummy(-1);
+    dummy.next = head;
+    ListNode *pre = &dummy;
+    while (p1 != NULL) {
+      p2 = p1->next;
+      if (p2 != NULL) {
+        pre->next = p2;
+        p1->next = p2->next;
+        p2->next = p1;
+      }
+      pre = p1;
+      p1 = p1->next;
+    }
+    return dummy.next;
+  }
+  //   ListNode *partition(ListNode *head, int x) {
+  //     ListNode *cur_node = head;
+  //     while (cur_node->next != NULL) {
+  //       cur_node = cur_node->next;
+  //     }
+  //     ListNode *end_node = cur_node;
+  //     cur_node = head;
+  //     ListNode dummy_node(-1);
+  //     ListNode *prev_node = &dummy_node;
+  //     prev_node->next = head;
+  //     while (cur_node != NULL) {
+  //       if (cur_node->val >= x) {
+  //         prev_node->next = cur_node->next;
+  //         end_node->next = cur_node;
+  //         cur_node->next = NULL;
+  //         end_node = end_node->next;
+  //         cur_node = prev_node;
+  //       }
+  //       prev_node = cur_node;
+  //       cur_node = cur_node->next;
+  //     }
+  //     return dummy_node.next;
+  //   }
+  //
 };
 
 int main(int argc, char const *argv[]) {
 
-  ListNode *head = new ListNode(-1);
+  ListNode *head = new ListNode(8);
   ListNode *pre_node = head;
   ListNode *end_node1, *end_node2;
 
-  for (int i = 40; i < 43; i++) {
+  for (int i = 2; i < 10; i++) {
     ListNode *node = new ListNode(i);
     pre_node->next = node;
     pre_node = node;
   }
   end_node1 = pre_node;
-  // pre_node->next = head;
-  ListNode *head2 = new ListNode(0);
+  pre_node->next = head;
+  // ListNode *head2 = new ListNode(8);
+  //
+  // pre_node = head2;
+  // for (int i = 8; i < 10; i++) {
+  //   ListNode *node = new ListNode(i);
+  //   pre_node->next = node;
+  //   pre_node = node;
+  // }
+  // end_node2 = pre_node;
 
-  pre_node = head2;
-  for (int i = 10; i < 13; i++) {
-    ListNode *node = new ListNode(i);
-    pre_node->next = node;
-    pre_node = node;
-  }
-  end_node2 = pre_node;
-
-  ListNode *head3 = new ListNode(-1);
-
-  end_node1->next = head3;
-  end_node2->next = head3;
-  pre_node = head3;
-  for (int i = 20; i < 22; i++) {
-    ListNode *node = new ListNode(i);
-    pre_node->next = node;
-    pre_node = node;
-  }
+  // ListNode *head3 = new ListNode(9);
+  //
+  // end_node1->next = head3;
+  // end_node2->next = head3;
+  // pre_node = head3;
+  // for (int i = 0; i < 2; i++) {
+  //   ListNode *node = new ListNode(i);
+  //   pre_node->next = node;
+  //   pre_node = node;
+  // }
 
   LiskListSolution sol;
   // sol.printall(head);
-
+  std::cout << sol.hasCycle(head) << '\n';
   cout << std::endl;
 
-  cout << sol.hasCycle(head);
-  cout << sol.getIntersectionNode(head, head2);
-  sol.sortList(head);
-  /*ListNode *newHead = sol.reverseBetween(head,1,2);
-*/
-  sol.printall(head);
-
+  // cout << sol.hasCycle(head);
+  // cout << sol.getIntersectionNode(head, head2);
+  // sol.sortList(head);
+  // sol.printall(head);
+  // ListNode *addrlt = sol.swapPairs(head);
+  // sol.printall(addrlt);
+  // /*ListNode *newHead = sol.reverseBetween(head,1,2);
+  //  */
+  // // sol.printall(head);
+  //
   ListNode *pn = head;
   ListNode *next = head;
   while (pn != NULL) {
