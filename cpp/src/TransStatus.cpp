@@ -27,7 +27,7 @@ int main() {
     long double max_candidate = 10e15;
     long long prev_file_num = 0;
     int prev_file_per = 0;
-    while (!ifs.eof() || case_idx >= case_num) {
+    while (!ifs.eof() || case_idx < case_num) {
 
 
         getline(ifs, s);
