@@ -1,0 +1,1013 @@
+\documentclass{aas}
+\usepackage{multicol}
+\usepackage{psfig}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{ccaption}
+\usepackage{booktabs} % 做三线表的上下两条粗线用
+
+\usepackage{algorithmicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage{siunitx}
+%\usepackage{hyperref}
+\usepackage{enumitem}
+\setlist[itemize]{itemsep=0mm}
+\setlist[enumerate]{itemsep=0mm}
+\usepackage{mathrsfs}
+\usepackage{framed}
+\usepackage{cite}
+\usepackage{amsthm}
+\usepackage{lipsum}
+\usepackage{color,soul}
+\usepackage{leftidx}
+\usepackage[square,super,sort&compress]{natbib}
+\setcitestyle{citesep={,}}
+\setlength{\bibsep}{0.0pt}
+
+%\usepackage{setspace}
+\AtBeginDocument{%
+  \addtolength\abovedisplayskip{-0.3\baselineskip}%
+  \addtolength\belowdisplayskip{-0.3\baselineskip}%
+%  \addtolength\abovedisplayshortskip{-0.5\baselineskip}%
+%  \addtolength\belowdisplayshortskip{-0.5\baselineskip}%
+}
+
+
+\graphicspath{{../image/}}
+%\usepackage[justification=centering]{caption}
+%\captionsetup{font={scriptsize}}
+%\captionsetup[figure]{labelsep=space}
+%\captionsetup[table]{labelsep=quad}
+
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem*{cor}{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[]
+\newtheorem{conj}{Conjecture}[]
+\newtheorem{exmp}{Example}[]
+
+\theoremstyle{remark}
+
+\setcounter{page}{1}
+
+\usepackage{moreverb} % for verbatim ouput
+
+% Count of words
+
+\immediate\write18{texcount -inc -incbib
+-sum borra.tex > /tmp/wordcount.tex}
+\newcommand\wordcount{
+\verbatiminput{/tmp/wordcount.tex}}
+
+\begin{document}
+
+\cntitle{{\hei\qquad 移动机器人视觉里程计综述}
+
+\thanks{收稿日期\
+XXXX-XX-XX
+\quad
+录用日期\
+XXXX-XX-XX}
+
+\thanks{Manuscript received
+Month Date, Year;
+accepted
+Month Date, Year}
+
+\thanks{国家自然科学基金(XXXXXX)资助}
+
+\thanks{Supported by National Natural Science Foundation of China (XXXXXX)}
+
+\thanks{本文责任编委\ XXX}
+
+\thanks{Recommended by Associate Editor BIAN Wei}
+
+%\thanks{1.
+%中国科学院自动化研究所精密感知与控制研究中心\ 北京\ 100190
+%\quad 2.
+%中国科学院计算机与控制工程学院\ 北京\ 100190
+%}
+
+%\thanks{1.
+%Research Center of Precision Sensing and Control, Institute of Automation, Chinese Academy of Sciences, Beijing
+%100190
+%\quad 2.
+%the School of Computer and Control Engineering, University of Chinese Academy of Sciences, Beijing 100190
+%}}
+
+%\cnauthor{丁文东$^{\scriptscriptstyle 1,\,2}$
+%\hspace{1em}
+%徐\ 德$^{\scriptscriptstyle 1,\,2}$
+%\hspace{1em}
+%刘希龙$^{\scriptscriptstyle 1,\,2}$
+%\hspace{1em}
+%张大朋$^{\scriptscriptstyle 1,\,2}$
+%\hspace{1em}
+%陈天$^{\scriptscriptstyle 1,\,2}$
+%}
+
+\thanks{1.
+xx研究中心\ 北京\ 100190
+\quad 2.
+xx学院\ 北京\ 100190
+}
+
+\thanks{1.
+Research Center of xxx, Institute of xx, xx
+100190
+\quad 2.
+the School of xx, University of xxx, xx xx
+}}
+
+\cnauthor{xx$^{\scriptscriptstyle 1,\,2}$
+\hspace{1em}
+xx$^{\scriptscriptstyle 1,\,2}$
+\hspace{1em}
+xxx$^{\scriptscriptstyle 1,\,2}$
+\hspace{1em}
+xx$^{\scriptscriptstyle 1,\,2}$
+\hspace{1em}
+xx$^{\scriptscriptstyle 1,\,2}$
+}
+
+\cnabstract{定位是移动机器人导航的重要组成部分。在定位问题中，视觉发挥了越来越重要的作用。本文首先给出了视觉定位的数学描述，然后按照数据关联方式的不同介绍了视觉里程计中的代表性方法，讨论了提高视觉里程计鲁棒性的方法。此外，本文讨论了语义分析在视觉定位中作用以及如何使用深度学习神经网络进行视觉定位的问题。最后，本文简述了视觉定位目前存在的问题和未来的发展方向。}
+
+\cnkeyword{视觉里程计，视觉定位，位姿估计，导航，移动机器人。}
+
+\doi{10.16383/j.aas.20xx.cxxxxxx}
+
+\entitle{Review on Visual Odometry for Mobile Robots}
+
+%\enauthor{DING Wen-Dong$^{1,\,2}$
+%\qquad
+%XU De$^{1,\,2}$
+%\qquad
+%LIU Xi-Long$^{1,\,2}$
+%\qquad
+%ZHANG Da-Peng$^{1,\,2}$
+%\qquad
+%CHEN Tian$^{1,\,2}$
+%}
+
+\enauthor{xx$^{1,\,2}$
+\qquad
+xxx$^{1,\,2}$
+\qquad
+xxx$^{1,\,2}$
+\qquad
+xxx$^{1,\,2}$
+\qquad
+xxx$^{1,\,2}$
+}
+
+\enabstract{Localization plays a key role in navigation of mobile robots. Vision becomes more and more important for localization. Firstly, this paper gives the mathematical description of visual localization. Secondly, typical methods of visual odometry are introduced according to the data association modes. Thirdly, the methods to improve the robustness of the visual odometry are discussed. Fourthly, the effect of the semantic analysis on visual localization is described. How to use deep neural network in the visual localization is also provided. Finally, the existed problems and future development trends are presented.}
+
+\enkeyword{Visual Odometry, Visual localization, Pose estimation, Navigation, Mobile Robot.}
+
+%\cnaddress{丁文东, 徐德, 刘希龙, 张大朋, 陈天. 移动机器人视觉定位综述, 自动化学报, 201X,
+%\textbf{XX}(X): X$-$X}
+%
+%\enaddress{Ding Wen-Dong, Xu De, Liu Xi-Long, Zhang Da-Peng, Chen Tian.
+%Review on Visual Localization for Mobile Robots.
+%\textsl{Acta Automatica Sinica}, 201X, \textbf{XX}(X): X$-$X}
+
+\cnaddress{xxx, xxx, xxx, xxx, xxx. 移动机器人视觉里程计综述, 自动化学报, 201X,
+\textbf{XX}(X): X$-$X}
+
+\enaddress{xxx, xxx, xxx, xxx, xxx.
+Review on Visual Odometry for Mobile Robots.
+\textsl{Acta Automatica Sinica}, 201X, \textbf{XX}(X): X$-$X}
+
+\maketitle
+
+\pagestyle{aasheadings}
+
+%这一章为引言,无需写标题.
+
+%本文是《自动化学报》中文稿件\LaTeX 模版的一个样例和使用说明.模版的中文支持部分采用CCT. 这一章为引言,无需写标题.
+
+
+\section{引言}
+\label{sec:introduction}
+移动机器人想要完成自主导航\cite{burri2015real}，首先要确定自身的位置和姿态，即实现定位。一方面，一些移动机器人尤其是空中机器人\cite{dunkley2014visual}的稳定运行需要位姿信息作为反馈，以形成闭环控制系统。另一方面，随着移动机器人的快速发展，移动机器人需要完成的任务多种多样，例如物体抓取\cite{pinto2016supersizing}、 空间探索\cite{ai2004mapgen}、农业植保\cite{slaughter2008autonomous}、 搜索救援\cite{kamegawa2004development} 等，这些任务对移动机器人的定位提出了更高要求。
+
+常用的定位方法有全球定位系统（Global Position System， GPS）、基于惯性导航系统（Inertia Navigation System， INS）的定位、激光雷达定位、 基于人工标志\cite{olson2011tags,kikkeri2014inexpensive}的定位方法、视觉定里程计定位\cite{fraundorfer2011visual}等。GPS定位装置接收多颗卫星的信号，可解算出机器人的三维位置、速度。定位精度在米量级，误差不随时间积累，但GPS 信号被遮挡的地方无法使用。基于INS的定位利用加速度计及陀螺仪经过积分计算出机器人的位置、速度、姿态等，数据更新率高、短期精度和稳定性较好，但定位误差会随时间积累。激光雷达通过扫描获得机器人周围环境的三维点云数据，根据这些数据实现机器人相对于环境的定位。激光雷达定位精度高，实时性强，但成本较高。基于人工标志定位的方法利用二维码等作为路标实现机器人的定位。二维码需要安装于环境中，可以简单有效的完成定位，但是一定程度上限制了这些定位方法的使用范围。
+%GPS 以及二维码等{一类传感器}是安装于环境中的，可以简单有效的完成定位，但是一定程度上限制了这些定位方法的使用范围。另外一类传感器携带于机器人本体之上，如IMU （Inetial Measurement Unit）}，视觉传感器等。这类传感器一般间接获取位置数据。
+视觉里程计（Visual Odometry, VO）\cite{fraundorfer2011visual,fraundorfer2012visual}通过跟踪序列图像帧间的特征点估计相机的运动，并对环境进行重建。与轮式里程计类似，视觉里程计通过累计帧间的运动估计当前时刻的位姿。VO在系统运行中形成三维点云，作为路标点保存在系统中。在新的视角下，基于这些点可利用P\textit{n}P （Perspective n Points）\cite{hesch2011direct}方法进行定位。视觉里程计具有广泛的用途，可应用于无人车\cite{craighead2007survey}、无人机\cite{faessler2014monocular,meier2012pixhawk,lee2010benchmarking}、 增强现实\cite{klein2007parallel}等。%这个过程称为{建图}，因此常常在定位的过程中同时完成建图。与VO 系统类似，同步定位及建图（Simultaneous Localization And Mapping，SLAM）的目标是在一个未知的环境中实时重建环境的三维结构并同时对机器人自身进行定位，区别是VO关注局部地图以及运动轨迹的一致性，而SLAM 进行闭环检测，更加关注机器人轨迹的全局的一致性\cite{fraundorfer2011visual}。
+
+%通过多张图像（来自不同视角）恢复场景的结构是一个经典的问题，称为{SFM（Structure From Motion）}\cite{triggs1999bundle}。该问题中{相机}从不同视角获取的图像，这些视角相互独立，没有连续性假设。SFM 中需要找到场景点在不同视角中的投影，通过多视几何关系找到最匹配的{各图像对应的位姿}，并重建场景中的点。VO与之有相似的特点，但图像是增量式获得的，各帧的位姿是连续变化的，计算的结果需要实时给出，常使用BA （Bandle Adjustment）优化调整所得地图点和位姿轨迹。
+
+%可靠性高GPS 惯性定位相比，视觉惯性组合导航在长距离导航时虽然在精度上稍显逊色，但在GPS 信号被遮挡或者中断的时候，视觉惯性导航会具有明显的优势。%早期的视觉惯性里程计（Visual Inertial Odometry, VIO）系统中\colorbox{yellow}{IMU 和视觉方法分别计算定位结果}，然后将数据融合，两种定位方式是独立的，这种融合方法通常称为松耦合方式。{在紧耦合\cite{shen2015tightly,yang2016monocular} 方式中}，两者在系统中存在中间数据交换，IMU信号辅助VO更好的完成点跟踪，两者的测量数据同时作为测量，完成系统的状态估计。
+
+%现有关于移动机器人视觉定位方法的综述中，关于定位系统的鲁棒性设计的讨论比较少\cite{marchand2016pose,younes2016survey}，没有系统的介绍不同的设计技巧对系统鲁棒性的影响。另外随着深度学习在物体检测跟踪识别方面的应用，{出现了很多深度学习以及视觉语义分析}方法和机器人的视觉定位结合以提高定位性能的研究。语义分析结果可以为定位系统提供物体形状等先验性约束，另外深度学习可以学习到更好的特征表示，有利于帮助定位系统完成特征匹配等问题，深度学习还在场景识别闭环检测等方面的获得较好的效果。但现有综述中关于视觉语义分析以及深度学习方法如何帮助机器人完成定位\cite{cadena2016past}的讨论还比较少。针对上述两个问题，本文主要围绕以下几点展开：
+%\begin{itemize}
+% \item  介绍了视觉里程计的原理以及几个代表性的视觉里程计方法。
+%  \item 介绍了视觉定位系统中常用来提高系统的鲁棒性和定位精度的设计方法。
+%  \item 讨论了语义分析与VO之间关系，并介绍了如何借助语义分析提高VO系统的性能，另外介绍了使用深度网络完成定位任务的方法。
+%  %\item 讨论了当前的视觉惯性测量的常用方法、常见的问题和解决方案。
+%\end{itemize}
+
+本文针对VO展开讨论，其他部分组织如下：第\ref{sect:problem-introduction}节简要介绍定位问题的数学描述。第\ref{sect:typical-vo}节论述主流的视觉定位方法，重点介绍三类视觉里程计的原理与特点。第\ref{sect:Robust_design}节讨论了在传感器建模、视觉里程计前端后端等方面的鲁棒性设计技巧。第\ref{subsect:semantic} 节介绍了结合视觉语义分析的位姿估计方法以及深度学习网络在位姿估计中的应用。第\ref{sect:Verification} 节介绍了位姿估计的性能评价方法，常用的数据集以及常用的工具库。
+第\ref{sect:future of vo} 节给出了视觉定位目前存在的问题和未来的发展方向。
+%文章讨论LSTM等RNN方法在序列数据分析中流行的DNN方法如何实现视觉和惯性数据的融合，并比较这些dnn方法和非DNN方法的性能。
+
+\section{定位问题数学描述}\label{sect:problem-introduction}
+%机器人是仿人创造的，人的运动同样需要定位导航。人的自身定位感知系统包括视觉系统、前庭系统，两者共同感知自己的运动状态（ego-motion）\cite{weiss2012vision}。人的前庭系统在内耳，通过前庭系统人可以知道自己的加速度，角速度等。双目能够感知一定范围内的景物深度，远距离的景物，需要移动足够的距离之后才能感知景深。两系统相互补充，使得人获得较好的运动感知。
+
+%定位问题是一个基础的问题，它尚未被解决，它的实现需要更高的上层方法的帮助。定位问题在机器人系统中位于控制底层之上，位于其他的高层次问题，例如环境感知、避障、目标识别跟踪等问题之下。在一些场合一个定位系统需要裁剪，以适应简单的任务驱动。在一些场合需要更高的上层方法的帮助。因此定位是机器人自主运动的基础，解决导航问题的关键之一。%如图\ref{fig:localization postion in pyrmaid} 所示中金字塔的结构表明了定位问题在机器人系统中位置和作用。
+
+%\begin{figure}
+%\centering
+%\includegraphics[width=0.8\linewidth]{pyramid.pdf}
+%\caption{机器人控制层次金字塔}\label{fig:localization postion in pyrmaid}
+%\end{figure}
+%定位对于机器人的作用无疑是重要的，那么是否存在一种成本较低，重量够轻，室内外通用，能够长时间运行的，不受光照、环境限制的一个精确定位方法，事实上这样的系统现在是不存在的，但是视觉惯性定位这种方案是比较有希望实现上述目标的。
+%机器人的定位经过多年的研究，在一些基本方法上，研究已经比较成熟\cite{cadena2016past}，在鲁棒性、效率等方面仍然存在欠缺。%研究的早期的第一个挑战是效率和数据关联的鲁棒性问题，研究者引入了概率论推导方法，包括基于扩展卡尔曼滤波\cite{jazwinski2007stochastic}、粒子滤波\cite{del1996non}和最大似然估计等方法，这时期可以称为古典年代。之后是算法分析的年代，定位问题的许多的特点被揭示，研究并提出多种方法解决这些问题。在这一时期的VO中，不变性特征在高效定位解决方案中的扮演了重要角色，依赖这些特征，人们实现了单目、双目以及RGBD的VO系统，开发了多种开源库，建立了用于算法测试评价的数据集。总结一下关于未来要考虑的问题。我们发现我们正进入定位导航的第三个时代，鲁棒性觉醒的时代，它具有鲁棒性能、高层次的理解力、资源敏感（对传感器和计算资源裁剪）、对任务驱动的判断等特征\cite{cadena2016past}。
+%使用单目的VO系统可以完成定位任务，但面临尺度模糊的缺点。{由于稠密的三维重建计算量较大}，在CPU上实时的完成困难\cite{pizzoli2014remode}，{解决方法是使用GPU 加速计算或者}安装双目便于完成稠密三维重建。使用双目的系统能够有效重建的景物深度跟双目的基线长度相关。没有使用闭环的VO系统会面临漂移的问题，相机快速旋转过后容易出现严重的尺度漂移，没有闭环的系统无法对漂移完成纠正。一些系统在场景中的点特征不够明显，纹理不够丰富的时候，系统初始化困难，这个缺点在一些使用不变性特征的VO 系统中表现明显，同样失败后的重定位也是这样。另外现有的系统大多建模于全局快门相机，对于使用卷帘快门相机的系统，一些方法尤其是直接使用灰度值匹配的方法容易失效。考虑到机器人系统，如无人机，可用资源受限，如载重量、计算能力、续航能力等等只适合完成小计算量的任务，如VO、局部建图等\cite{faessler2016autonomous}，因此如何降低计算资源的消耗也是视觉定位系统中需要解决的问题。
+
+%另外高层的语义理解\cite{salas2013slam++}有利于系统的定位。对于环境中已经识别的物体，这些物体上的点，环境中已知结构的点群，作为定位系统中的路标点，他们的自有约束增大目标函数的收敛半径，使其收敛更容易。正确识别的物体可以构成更加鲁棒、区分性更好的特征融入系统，也可以作为语义地图帮助定位系统完成闭环检测。%资源的受限的场合VO更加适合，没有闭环\cite{tomic2012toward}，只是建立局部小规模地图，没有大范围的建图，一般系统中维护的位姿的数量是固定的（具体方法详见\ref{subsect:optimzation-scale-limitation}）。这样损失了小部分精度，但是避免了资源的不足。
+
+%另一方面，对于一些机器人的任务，不需要一种适用于各种环境的定位方法，VO或者VIO并不总是最佳的方案。有些室内机器人，如扫地机器人，因为运动的范围小，定位的精度因此要求更高，使用VO/VIO系统定位并不是最好的方案。另外一些室外机器人，如无人机，在飞离地面超过几十米之后，由于向下看的相机视野中的尺度较大，定位精度难以保证，甚至不如GPS。对于一些复杂的高度自动化的任务，如物体抓取任务，使用视觉则是比较合理的方案，物体的识别，物体的定位等视觉任务都依赖于相机，使用相机定位作为反馈有利于任务的完成。
+
+%在机器人定位算法的验证中，验证定位算法误差的基准系统的要么精度较高但使用复杂，成本较高，要么成本较低，精度不足，并且没有统一的评价标准。因此文章最后介绍了常用的用于定位算法{验证}的基准系统。根据一些发布的数据集以及定位目标我们介绍了几种精度的评价方法。最后介绍了相关的开源工具和验证数据集。
+
+%\subsection{问题建模}\label{subsect:optimization}
+%机器人的空间位置和姿态合称为位姿。假设机器人的运动分布于三维空间中，那么机器人的位置可以使用一个三维向量$[x,y,z]$表示，机器人的姿态Roll，Pitch，Yaw。姿态的表示有多种方法，其中包括变换矩阵，四元数，欧拉角，旋转轴加转角等方式表示。为了表示方便简洁同时避免奇异，我们常用四元数表示，在求解姿态的微分时使用旋转矩阵。
+
+%机器人的定位问题是一个状态估计问题。机器人的状态使用$\mathcal{X}$表示，包括机器人的位置$\mathbf{p}$，姿态$\mathbf{q}$ （对应的旋转矩阵为$\mathbf{R}$），线速度$\mathbf{v}$ 等机器人状态，状态变量可表示为$\mathcal{X} =[\mathbf{p},\mathbf{v},\mathbf{q}]^T$。
+机器人$k$ 时刻的位姿为$\mathbf{T}_k=\begin{bmatrix}\mathbf{R}_k&\mathbf{p}_k\\\mathbf{0}&1\end{bmatrix}$，其中$\mathbf{R}_k$为机器人$k$时刻的姿态，$\mathbf{p}_k$为机器人$k$时刻的位置。 那么$k+1$时刻的位姿为
+\begin{equation}\label{eq:recursive-pose}
+\mathbf{T}_{k+1}=\mathbf{T}_k\mathbf{T}_{k,k+1}
+\end{equation}
+其中$\mathbf{T}_{k,k+1}$为$k$时刻到$k+1$时刻机器人的相对位姿，初始状态下机器人的姿态为$\mathbf{T}_0$。
+
+使用式\eqref{eq:recursive-pose}递推获得当前位姿。因此，该过程中不可避免的会出现误差，且该误差具有累计现象。为消除累计误差，需要基于观测值进行滤波或者BA（Bundle Adjustment）优化。
+
+%在运动过程中获得$i$时刻的测量为$\mathbf{z}_i$，可以表示为状态的参数方程
+%\begin{equation}
+%\mathbf{z}_i=h_i(\mathcal{X}_i)+\epsilon_i
+%\end{equation}
+%这里$h_i(*)$为已知的测量模型函数，$\epsilon_i$为随机测量噪声。
+%定位中的位姿状态估计可以形式化为一个最大后验估计。
+%
+%\begin{equation}\label{eq:map-form}
+%\begin{split}
+%\mathcal{X}^* = \arg\max_{\mathcal{X}}\quad\mathrm{p}(\mathcal{X}|\mathbf{Z})\\
+% = \arg\max_{\mathcal{X}}\quad\mathrm{p}(\mathbf{Z}|\mathcal{X})\mathrm{p}(\mathcal{X})
+%\end{split}
+%\end{equation}
+%
+%可以看出将\eqref{eq:map-form}展开可以得到
+%\begin{equation}
+%\label{eq:graph-map}
+%\begin{split}
+%\mathcal{X}^*=&\arg\max_{\mathcal{X}}\quad\mathrm{p}(\mathcal{X})\prod_{k=1}^m\mathrm{p}(z_k|\mathcal{X})\\=&\arg\max_{\mathcal{X}}\quad\mathrm{p}(\mathcal{X})\prod_{k=1}^m\mathrm{p}(z_k|\mathcal{X}_k)
+%\end{split}
+%\end{equation}
+
+为了保证系统的实时性，视觉定位通常分为两部分，一部分是基于特征匹配的运动估计，另一部分对定位结果进行优化。特征匹配针对位姿变化前后的图像获取对应特征点对，利用$n$($n\ge3$)个匹配点对和相机内参数得到相机的运动量。当相机运动距离较大，或者能够跟踪到的点比较少的时候，则把这一帧图像作为关键帧保存下来。优化部分利用特征点的重投影偏差最小化对关键帧对应的相机位姿及特征点在相机坐标系中的位置进行估计。第$i$ 关键帧对应的投影矩阵为
+\begin{equation}
+\mathbf{P}_i=\mathbf{K}[\mathbf{R}_i,\mathbf{p}_i]
+\end{equation}
+其中$\mathbf{K}$表示相机的内参数矩阵。
+
+运动估计和优化均可采用下式
+\begin{equation}\label{eq:optimizaiton}
+e=\sum_{i=1}^n\sum_{j=1}^mw_{ij}\|\mathbf{m}_{ij}-\mathbf{P}_i\mathbf{M}_j\|^2
+\end{equation}
+其中，$\mathbf{M}_{j}$为路标点，$\mathbf{m}_{ij}$为$\mathbf{M}_{j}$在第$i$帧中的图像坐标，$e$表示误差，$w_{ij}$ 表示路标点$\mathbf{M}_{j}$在第$i$帧中权值。如果点$j$ 在第$i$帧中可见，则$w_{ij}=1$，否则为0。
+
+运动估计部分利用式\eqref{eq:optimizaiton}获得相机的位姿$[\mathbf{R},\mathbf{p}]$，优化部分则对位姿$[\mathbf{R},\mathbf{p}]$ 和路标点$\mathbf{M}_{j}$同时进行优化。
+
+在求解的过程中，对该系统线性化，然后可以用如高斯-牛顿或LM（Levenberg–Marquardt）方法迭代求解。由于点与点之间、位姿与位姿之间相对误差项是独立的，相应矩阵具有稀疏性，式\eqref{eq:optimizaiton} 可以实时求解。%另外可以利用边缘化加速计算。边缘化利用Schur消元降低求解变量的维度\cite{kummerle2011g}。 经过Schur 消元之后的矩阵一般无法保持原有矩阵的稀疏性，滑动窗口方法（详见\ref{subsect:optimzation-scale-limitation}）中对图像中的每一帧都进行了BA的处理，因此为了保持计算的快速性，这些方法通过丢弃相关的路标点来保持消元之后的矩阵仍然具有稀疏性。
+
+%使用$\mathbf{T}_{i}$表示相机的位姿，使用表示$\mathbf{M}_{ij}$路标点的位置，
+%在运动过程中获得的测量为$\mathbf{Z}=\{\mathbf{z}_i|i=0,1,2,..,k\}$且$\mathbf{z}_i=\{\mathbf{T}_i,\mathbf{M}_{ij}\}$，一个测量可以表示为状态的参数方程
+%\begin{equation}
+%\mathbf{z}_i=h_i(\mathcal{X}_i)+\epsilon_i
+%\end{equation}
+%这里$h_i(*)$为已知的测量模型函数，$\epsilon_i$为随机测量噪声。
+%定位中的位姿状态估计可以形式化为一个最大后验估计。
+%
+%\begin{equation}\label{eq:map-form}
+%\mathcal{X}^* = \arg\max_{\mathcal{X}}\quad\mathrm{p}(\mathcal{X}|\mathbf{Z}) = \arg\max_{\mathcal{X}}\quad\mathrm{p}(\mathbf{Z}|\mathcal{X})\mathrm{p}(\mathcal{X})
+%\end{equation}
+%
+%可以看出将\eqref{eq:map-form}展开可以得到
+%\begin{equation}
+%\label{eq:graph-map}
+%\begin{split}
+%\mathcal{X}^*=&\arg\max_{\mathcal{X}}\quad\mathrm{p}(\mathcal{X})\prod_{k=1}^m\mathrm{p}(z_k|\mathcal{X})\\=&\arg\max_{\mathcal{X}}\quad\mathrm{p}(\mathcal{X})\prod_{k=1}^m\mathrm{p}(z_k|\mathcal{X}_k)
+%\end{split}
+%\end{equation}
+%上述问题可以解释为关于一个因子图（Factor Graph），变量对应图中的节点。一个因子图是一种编码k阶依赖及对应变量的图模型。使用该模型的优点一是可以清楚的表达问题的内部关系，二是因子图可以对复杂的推断问题进行建模。因子图之间的连通性影响位姿估计问题的稀疏性。
+%最大后验估计方法被证明相对于基于非线性滤波器的方法更加精确有效。%滤波器方法以及基于图模型的方法都是在递归的贝叶斯框架下\cite{cadena2016past}，%前者构造一个运动模型，其结果是迭代得到新的状态参数，而后者使用一个目标函数，优化一个最优状态，两者都需要一个相机和IMU的更新模型，状态参数，在更新参数的迭代中，传播测量方差。
+%上述问题可以建模为滤波器方法，%将为一个在线的状态估计问题，系统的状态包含了机器人的位姿和地图，常用的方法是卡尔曼滤波器，信息滤波器，粒子滤波器等。%（这里需要添加几个各种滤波器方法的文献）
+%平滑方法根据测量数据估计机器人的全部轨迹，上述方法属于全SLAM方法，依赖于最小平方误差最小化的方法的求解。
+%(分别给出对应的运动模型,更新模型,状态量和图网络中的目标函数和解决方法)
+上述问题也可以建模为因子图（Factor Graph）并使用图优化方法求解\cite{leutenegger2015keyframe,yang2016monocular}。 图模型\cite{shen2015tightly,concha2016visual} 可直观的表示视觉定位问题，图中的状态 节点表示机器人的位姿或者路标，节点之间的边对应状态之间的几何约束。图模型构建之后，经过优化可得到与测量数据最匹配的状态参数，进而形成路标点地图。一个常用图网络优化工具为g2o （{General Graph Optimization}）\cite{kummerle2011g}，详见\ref{subsect:common-lib-models}。
+\section{VO代表性方法}\label{sect:typical-vo}
+%\subsection{数据关联}
+VO系统中数据关联表示了3D点在不同帧之间的关系。在运动估计中，使用当前帧图像和过往帧图像进行数据关联求解相机运动量，通过递推每一步的运动量可以得到相机和机器人的位姿。数据关联中的点所在空间有三种\cite{fraundorfer2012visual}：
+\begin{itemize}\setlength\itemsep{0em}
+  \item 2D-2D：当前帧的点和过往帧的点都是在图像空间中。在单目相机的初始化过程中经常出现这种数据关联。
+  \item 3D-3D：当前帧和过往帧的点都在3D空间中，这种情形一般在深度相机VO系统的位姿估计或者经过三角测量的点进行BA时出现。
+  \item 3D-2D：过往帧的点在3D空间中，当前帧的点在图像空间中，这样问题转化为一个P\textit{n}P问题。
+\end{itemize}
+
+在VO系统初始化时，地图未建立，系统无法确定当前状态，采用2D-2D数据关联，对基础矩阵或者单应矩阵分解求解相机的相对位姿，三角化求解路标点的三维坐标。若地图中3D点可用，优先使用3D点进行位姿估计。此时，将3D 路标点投影到当前帧图像，在局部范围内搜索完成图像点的匹配。这种3D-2D的数据关联经常使用于VO 系统正常状态下的定位。3D-3D数据关联常用于估计和修正累计误差和漂移。3D路标点会出现多帧图像中，通过这些3D 点之间的数据关联可以修正相机的运动轨迹以及3D 点的三维位置。
+
+例如，SVO\cite{Forster2014ICRA}(Semi-direct Visual Odometry)中除了初始化过程，正常状态下系统处理当前的每一帧时三种数据关联先后被使用，2D-2D数据关联实现图像空间的特征点匹配，通过3D-2D数据关联计算相机的位姿，并经过3D-3D数据关联后利用BA 进行优化。DTAM(Dense Tracking And Mapping)\cite{newcombe2011dtam} 的目标函数中包含了多种数据关联的误差，包括图像空间的匹配误差和3D 空间的位置误差。当帧间运动较小，成功匹配的3D点较多时，估计位姿矩阵；当帧间运动较大，匹配2D点较多时，估计基础矩阵。按照2D-2D数据关联方式的不同，视觉定位方法可以分为直接法、非直接法和混合法。
+\subsection{直接法}\label{subsect:direct-vo-model}
+作为数据关联方式的一种，直接法假设帧间光度值具有不变性，即相机运动前后特征点的灰度值是相同的。数据关联时，根据灰度值对特征点进行匹配。但这种假设与实际情况存在差异，特征点容易出现误匹配。%，可以表示为$I_T(\mathbf{x}) = I(\mathbf{W(x;p)})$，$I$表示被匹配的图像，$I_T$ 表示模板图像，$\mathbf{W}$ 表示图像点的变换函数，。%，那么
+%\begin{equation}
+%\mathbf{W}=\begin{bmatrix}(1+p_1)x+p_3y+p_5\\p_2x+(1+p_4)y+p_6\end{bmatrix}=\begin{bmatrix}1+p_1& p_3 & p_5\\p_2&1+p_4&p_6\end{bmatrix}\begin{bmatrix}x\\y\\1\end{bmatrix}
+%\end{equation}
+Engel等\cite{engel2016direct,engel2016monodataset}使用了一种更精确的光度值模型，该模型对相机成像过程建模了相机曝光参数、Gamma矫正以及镜头衰减。该模型使用辐照度不变性假设，可以表示为$I_i(\mathbf{m})=G(t_iV(\mathbf{m})B(\mathbf{m}))$，其中像素点$\mathbf{m}$的辐照度为$B$，镜头的衰减为$V$，曝光时间为$t_i$，CCD的响应函数为$G$。对该模型进行逆向求解得到校正后的图像灰度值，用于进行数据关联。
+
+为了快速求解上述问题，Lucas等\cite{lucas1981iterative}引入FAIA (Forward Additional Image Alignment)方法，使用单一运动模型代替独立像素位移差。Baker等\cite{baker2004lucas}提出统一的框架，在FAIA基础上引入FCIA(Forward Composition Image Alignment)，ICIA(Inverse Compositional Image Alignment)和IAIA(Inverse Additional Image Alignment)\cite{baker2004lucas}。SVO 和PTAM\cite{klein07parallel} (Parallel Traking And Mapping)利用ICIA实现块匹配，DPPTAM (Dense Piecewise Planar Tracking and Mapping)\cite{concha2015dpptam} 利用ICIA 完成显著梯度点的半稠密重建。
+
+%Forward和Inverse两者之间的不同在于是模板图像还是被匹配图像是运动模型的函数，使用不同的方法导致计算量不同。%由于需要计算Hessian矩阵，因此如果对模板求Hessian 矩阵，只需要计算一次就够了，因为模板是在迭代过程中的每一步固定的。因此会减小计算量。而对图像计算的话那么实际上整幅图像都得计算，因此计算量大为上升。%可以看到前向方法和后向方法在目标函数上不太一样，运动向量$\mathbf{p}$都是跟着$\mathbf{I}$被匹配图像），但是前向方法中的迭代的微小量$\Delta \mathbf{p}$使用$\mathbf{I}$ 计算的，后向方法中的$\Delta \mathbf{p}$使用$\mathbf{T}$计算的。因此计算雅克比矩阵的时候，一个的微分是是在$\Delta \mathbf{p}$ 处，而另外一个是在0处。所以如果使用雅克比矩阵计算Hessian矩阵，后者计算的结果是固定的。
+%前向方法的目标函数$\sum_{\mathbf{x}}[\mathbf{I}(\mathbf{W}(\mathbf{x};\mathbf{p}+\Delta \mathbf{p}))-\mathbf{T}(\mathbf{x})]^2$，后向方法为$\sum_{\mathbf{x}}[\mathbf{T}(\mathbf{x};\Delta \mathbf{p})-\mathbf{I}(\mathbf{W}(\mathbf{x};\mathbf{p}))]^2$。 如果使用一阶泰勒展开那么前向方法的目标函数变为
+%$\sum_{\mathbf{x}}[\mathbf{I}(\mathbf{W}(\mathbf{x};\mathbf{p}))+\nabla \mathbf{I}\frac{\partial\mathbf{W}}{\partial \mathbf{p}}\Delta\mathbf{p}-\mathbf{T}(\mathbf{x})]^2$
+%，后向方法展开为$\sum_{\mathbf{x}}[\mathbf{T}(\mathbf{W}(\mathbf{x};0))-\mathbf{I}(\mathbf{W}(\mathbf{x};\mathbf{p}))+\nabla %T\frac{\partial\mathbf{W}}{\partial \mathbf{p}}\Delta\mathbf{p}]^2$。
+%而雅克比矩阵为
+%\begin{equation}
+%\frac{\partial \mathbf{W}}{\partial \mathbf{p}}=\begin{bmatrix}x,0,y,0,1,0\\0,x,0,y,0,1\end{bmatrix}
+%\end{equation}
+%，可以看出雅克比矩阵只和$x,y$的位置有关，图像$\mathbf{I}$的梯度是要在$\mathbf{W}(\mathbf{x};\mathbf{p})$处计算的，后向方法中图像$\mathbf{T}$的梯度在$\mathbf{W}(\mathbf{x;0})$处计算，因此Hessian矩阵不依赖与$\mathbf{p}$。
+
+%迭代过程中，如果迭代结果是在原始的值上增加一个微小量，那么称之为Additive，如果是在原始值的基础上乘以一个矩阵，这方法称之为Compositional，同\ref{subsect:precision-calculation}中介绍的标准运动组合算子$\oplus$。%两种微小量理论上是等效的，而且计算量也相当。
+
+
+\begin{table*}[t]\centering\small
+\caption{直接法与非直接法优缺点对比}\label{tab:feature-vs-direct}
+\begin{tabular}{c c c }
+\toprule[1.5pt]
+ &直接法& 非直接法\\
+\midrule[1pt]
+目标函数 & 最小化光度学误差 & 最小化重投影误差 \\
+优点1 & 使用了图像中的所有信息 & 适用于图像帧间的大幅运动 \\
+优点2 & 使用帧间的增量计算减小了每帧的计算量 & 比较精确，对于运动和结构的计算效率高 \\
+\midrule[1pt]
+缺点 1 & 受限于帧与帧之间的运动比较小的情况 & 速度慢（计算特征描述等） \\
+缺点2 &通过对运动结构密集的优化比较耗时 &需要使用RANSAC等鲁棒估计方法 \\
+容易失败 & 场景的照明发生变化 &纹理较弱的地方\\
+\bottomrule[1.5pt]
+\end{tabular}
+\end{table*}
+LSD (Large Scale Direct) SLAM\cite{engel2013semi,engel2014lsd}采用直接方法进行数据关联，它建立深度估计、跟踪、建图三个线程。该方法对图像点建立随机深度图，并在后续帧中对深度进行调整直至收敛。该方法的初始化不需要两视几何约束，不会陷入两视几何退化的困境，但初始化过程需要多个关键帧之后深度图才会收敛，此期间跟踪器产生的地图是不可靠的。LSD SLAM通过权值高斯-牛顿迭代方法最小化光度值误差。光度值误差是当前帧和参考关键帧之间所有对应点的灰度值差的平方和。LSD SLAM建图对关键帧及非关键帧分开处理，对于前者，过往关键帧的深度图投影到当前关键帧，并作为深度图的初始值；对于后者，则进行图像匹配并计算位姿，对当前帧更新深度信息，对深度信息进行平滑并移除外点。%为了降低计算量，减小外点干扰。%LSD SLAM 选取一部分好的立体匹配参加深度图的更新，选择的原则是光度差异、几何差异以及逆深度差异。
+
+DSO\cite{engel2016direct}（Direct Sparse Odometry）系统基于直接法的拓展，使用光度值误差最小化几何和光度学参数。DSO对图像中有梯度、边缘或者亮度平滑变化的点均匀采样以降低计算量。DSO对光度学模型校正、曝光时间、透镜畸光晕和非线性响应都做了校准。为了提高速度，降低计算量，DSO使用滑动窗口方法，对固定帧数的位姿进行优化。
+
+DPPTAM \cite{concha2015dpptam}基于超像素对平面场景进行稠密重建。该方法对图像中梯度明显的点进行半稠密重建，然后对图像中其他点进行超像素分割，通过最小化能量函数完成稠密重建，该能量函数在\ref{subsubsect:depth-map-model}中介绍。
+
+直接法适用于帧间运动较小的情形。直接法使用了简单的成像模型，因此在场景的照明发生变化时容易失败。关于直接法和非直接法的优缺点对比详见表\ref{tab:feature-vs-direct}。
+
+\subsection{非直接法}
+另外一种帧间数据关联是非直接法，又称为特征法，该方法提取图像中的特征进行匹配，最小化重投影误差得到位姿。图像中的特征点以及对应描述子用于数据关联，通过特征描述子的匹配，完成初始化中2D-2D以及之后的3D-2D的数据关联。常用的（旋转、平移、尺度等）不变性特征及描述子，如ORB\cite{rublee2011orb}，FAST\cite{rosten2010faster}，BRISK\cite{leutenegger2011brisk}, SURF\cite{bay2006surf}，可用于完成帧间点匹配。
+
+PTAM（Parallel Tracking and Mapping）\cite{klein07parallel}是一个基于关键帧的SLAM系统。它是很多性能良好的SLAM系统的原型，PTAM首先引入了跟踪和建图分线程处理的方法。原始的版本经过修改之后增加了边缘特征、旋转估计以及更好的重定位方法。PTAM的地图点对应图像中的FAST角点，FAST特征计算速度很快，但没有形成特征描述子，因此使用块相关完成匹配。
+
+ORB（Oriented FAST and Rotated BRIEF）特征\cite{rublee2011orb}是一种快速的特征提取方法，具有旋转不变性，并可以利用金字塔构建出尺度不变性。在整个定位过程以及建图的过程中，ORB SLAM（Simultaneous Localization And Mapping）\cite{mur2015orb}使用了统一的ORB 特征，在跟踪的时候提取ORB特征，完成点的匹配、跟踪、三角测量，闭环检测等关键过程。%OKVIS（Open Keyframe-based Visual-Inertial SLAM）\cite{leutenegger2015keyframe}使用BRISK\cite{leutenegger2011brisk}特征及其描述子，用于VIO 的前端的点匹配。RDSLAM（Real）则使用SIFT（GPU版本）完成帧间匹配。VINS\cite{yang2016monocular} （Monocular Visual-Inertial Systems）系统首先提取GFTT（Good Feature To Track）\cite{shi1994good}特征，然后使用光流法对该特征进行跟踪。
+
+DT（Deferred Triangulation）SLAM\cite{herrera2014dt}在地图中的路标点不仅使用三维点，而且使用二维图像特征点。在位姿估计中，目标函数中包括三维点的重建误差以及二维特征投影位置误差。DTSLAM维护了三个跟踪器，每个跟踪器包含一种位姿估计方法：位姿估计、本质矩阵估计和纯旋转估计。当足够数量的3D匹配存在时候，可以使用位姿估计；当3D点数量不足，但是2D点数量较多的时候估计本质矩阵。如果判定当前情况为纯旋转，那么使用2D点估计。
+
+当图像中没有足够的点特征时候，线特征是一个好的补充\cite{yang2017direct,lu2015robust}。通常使用的线段检测器有比较高的精度，但是很耗时间。Gomez-Ojeda等\cite{GomezOjeda2016}对每条线段计算LBD (Line Band Descriptor)描述子\cite{zhang2013efficient}，最小化点特征以及线段特征的重投影误差得到运动估计。
+%\begin{equation}  \label{eq:line-feature-projection}
+%  \begin{split}
+%    \Delta \mathbf{p}_i(\boldsymbol{\xi})=&\hat{\mathbf{p}}_i(\boldsymbol{\xi})-\mathbf{p}\\
+%    \Delta  \mathbf{l}_j(\boldsymbol{\xi})=&\left(\mathbf{l}^T_j\cdot
+%    \begin{bmatrix}\hat{\mathbf{p}}_j(\boldsymbol{\xi})&\hat{\mathbf{q}}_j(\boldsymbol{\xi})\end{bmatrix}\right)^T
+%  \end{split}
+%\end{equation}
+%这里$\hat{\mathbf{p}}_i(\boldsymbol{\xi})$ 表示重投影所得点，$\mathbf{p}$表示原始图像中的点，$\hat{\mathbf{p}}_j(\boldsymbol{\xi})$ 和$\hat{\mathbf{q}}_j(\boldsymbol{\xi})$表示重投影线段的端点，$\mathbf{l}$表示被检测线段的方程法向量。最小化两种重投影误差可以估计相机的运动。
+Zhou等\cite{zhou2015structslam,zhang2011building}使用消失点定义图像中的线结构，使用J-linkage\cite{toldo2008robust}将所得线段分类，计算一个消失点的粗略值，然后通过非线性最小二乘优化得到消失点在图像中的表示以及相机的方向。
+%$\eta$
+%\begin{equation}\label{eq:varnishing-point-to-domaint-direction}
+%  \eta \approx \mathbf{R}^{wc}\mathbf{K}^{-1}\mathbf{v}
+%\end{equation}
+%这里$\mathbf{R}^{wc}$表示相机到世界坐标系的旋转变换，$\mathbf{K}$表示相机的内参数。文章使用Kalman滤波器，状态变量包括相机的位姿及运动速度，特征点以及线段表示。在数据关联中文章的特征是使用了线段的中点，而没有使用线段的描述子。
+
+Camposeco等\cite{camposeco2015using}使用消失点来提高VO系统的精度，首先使用线段检测器检测图像中的线段，然后使用最小二乘法计算消失点，将EKF（Extended Kalman Filter）中的误差状态向量（核心状态）中增加消失点作为增广状态，在更新EKF 核心状态时同时更新增广状态方程。Graeter等\cite{Graeter2015} 使用消失点提高单目VO系统的尺度计算的鲁棒性和精度。但是由于计算实际的尺度值时使用了相机到地面的高度作为先验知识，该方法受限于平面运动机器人。
+
+\subsection{混合法}
+SVO\cite{Forster2014ICRA}是一种混合式的VO，该方法首先提取FAST特征，使用特征点周围的图像块进行像素匹配，并对帧间的相对位姿累积可以初步估计当前位姿，累计误差会导致系统产生漂移。SVO通过匹配当前帧与地图中的点约束当前帧的位姿，降低累积误差。SVO初始化时使用单应矩阵分解求解相机的位姿，假设初始化场景中的点分布在一个平面内，因此适合平面场景的初始化。
+
+%\section{设计模式}\label{sect:VO}
+%定位问题可以形式化为一个最大后验问题，这里我们首先建模测量$\mathbf{Z}$和状态$\mathcal{X}$的关系，也就是数据关联问题。视觉里程计处理图像的时候首先要完成帧间图像的数据关联。帧间数据关联存在两种方式，一种是直接法，这种方式对帧间图像直接进行匹配，以完成位姿变换的估计。另外一种方式是检测图像中特征，使用特征描述子完成帧间的点匹配。数据关联的方式除了图像帧间的2D-2D关联，还有图像点到路标点的2D-3D关联，以及路标点到路标点的3D-3D的数据关联\cite{fraundorfer2012visual}。
+%
+%根据图像的数据关联方式我们分别介绍几种常见的VO/SLAM方法，然后简述VO中基本的设计模式。我们首先介绍VO中用到的数据关联方式以及它们的用途。然后由常见VO的系统引入VO中的基本设计模式。在软件设计中存在典型的设计模式，我们相信在VO系统同样存在若干设计模式隐式的包含于典型的VO系统。分析那些表现良好的VO方法及其开源代码，我们阐述频繁出现在多种VO系统中的方法，希望能够帮助研究者理解前人代码以及迅速建立自己实验代码，开发出更好的系统。
+%
+%然后我们从鲁棒性特点出发，讨论不同的设计方法对鲁棒性的影响，这些方面分别是系统初始化、卷帘快门建模、运动模型假设、目标函数、多尺度分析、深度图模型。这些方面从细节上影响了系统的鲁棒性，横向比较一些性能良好的系统这些方面的特点反映了它们的设计技巧。
+%
+%我们还探讨了使用图像语义分析在系统鲁棒性和精度的提升中的作用。图像中对已识别的物体，环境中已知结构的建模是图像的语义的组成部分。图像的语义分析有助于定位系统提高精度和鲁棒性。考虑到深度网络在物体识别、物体检测中广泛应用，我们还介绍了使用深度网络进行定位的方法。使用深度网络进行定位无法完全替代VO/SLAM 系统，使用端到端的训练方法现无法完成VO系统的全部功能或者实现与之匹配的效果\cite{agrawal2015learning,liu2015deep,kendall2015posenet}，但深度网络在定位问题中的研究仍然我们开辟了新的研究思路以及系统的实现方法。
+%
+%
+%\subsection{基本设计模式}
+%上文中我们介绍了VO/SLAM方法的不同，这些方法存在很多相似之处。这些相似之处体现了很多VO的设计方法和设计模式，如图\ref{fig:VO main procedure}所示为VO系统的算法流程。%我们不禁要问一个典型的定位方法的的基本要素有哪些，一个定位系统的基本步骤是怎样的。
+%\begin{figure}
+%  \centering
+%  % Requires \usepackage{graphicx}
+%  \includegraphics[width=\linewidth]{main-procedures.pdf}\\
+%  \caption{VO系统主要流程}\label{fig:VO main procedure}
+%\end{figure}
+%
+%视觉定位问题作为一个状态估计问题\cite{barfoot2016state}，它具备了状态估计的特点。图像是测量数据的来源，运动改变了机器人的状态，反映在测量上就是图像内容的变化。因此这里的状态估计就是从图像的信息中估计机器人的位姿。在机器人移动的过程中相机捕捉到一个图像序列，在这个图像序列中机器人看到其中的场景按照一定的规律移动和变化，场景中物体或者点移动规律和机器人状态的变换满足多视几何关系\cite{baker2004lucas}。
+%
+%{\heiti 设计模式1：图像中的点需要被追踪。}图像点群的统计规律可以表征景物的移动规律。如果已知机器人的运动可以计算出图像中每个点对应的运动量，进而知道在新一帧图像中点的位置。我们需要逆向求解上述问题，已知两帧图像的像素点对应关系，估计相机的运动。因此图像帧间的点对应是解决这个问题的关键之一。%这就是提取特征点进行跟踪或者直接使用灰度点跟踪的意义所在，根据我们使用的点的方式不容，可以看到上述两种方法— 直接法和特征法。
+%
+%{\heiti 设计模式2：下一帧的点（位姿）需要被预测。}估计点在下一帧图像中的投影有效的降低匹配的搜索范围。根据之前的运动状态估计帧间的运动量，可以推算当前帧的对应点的位置，然后在该位置附近寻找对应点的实际位置。常用的方法是使用恒速运动模型对于当前帧的位姿进行预测，这种恒速模型见于ORB SLAM、PTAM，DSO。另外一方面从优化的角度上考虑，被优化的目标（位姿）的搜索空间应该是比较小的。对于直接法的要求是帧率足够高，帧间点的移动量比较小。这样恒速模型失败的情况下仍然能够增大搜索空间重新跟踪上上一帧的点。
+%
+%
+%%SVO中是怎样实现的呢？ORB是怎样实现的？
+%%那么如何实现这样的实现点对应的跟踪器呢？
+%%slam算法在读到一张图像之后，首先把当前图像的点和前一帧图像的点对应起来，那么需要多少个点对应呢？怎么实现点对应呢？基于特征的方法是提取图像中的特征点用于匹配不同图像中相同的点，这是一种思路，常用的有sift orb等。另外一个思路是由于机器人的运动相对于图像的帧率较慢的时候，图像的内容变化较小，因此在局部搜索可以找到上一帧图像的点的位置，这就是直接法的思路。
+%{\heiti 设计模式3：单目系统需要双视关系完成初始化，重建三维点。}在系统初始过程中，只有第一帧图像，没有初始的运动模型估计、三维点。场景中相同的点在不同的视角中构成一个基础矩阵的关系，一个图像帧的图像平面和另一帧的图像的平面之间构成单应矩阵的关系（场景中的点满足平面假设），使用最小二乘法通过图像点可以计算得到单应矩阵和基础矩阵，使用矩阵奇异值分解（SVD）可将单应矩阵或者基础矩阵分解恢复出位姿变化。如果两帧图像之间仅有旋转的话，那么构成的基础矩阵是奇异的，因此在初始化的时候，相机做平移运动初始化过程才能完成。SVO在初始化的时候仅使用了单应矩阵，因此更加适用于平面化的场景，而ORB SLAM同时使用基础矩阵和单应矩阵，因此初始化过程更加鲁棒。
+%
+%已知相机的姿态以及多个视角下的对应点可以三维重建得到3D点，这些重建的3D点成为路标点。SVO构建一个深度滤波器，使用高斯分布叠加均匀分布建模，LSD则是深度映射使用随机初始化，并赋值一个大的方差，当相机运动足够的位移之后，深度估计可以收敛。路标点的集合可以成为地图。
+%
+%{\heiti 设计模式4：场景中重建的点需要被保存。}维护一个地图使得即使当前跟踪的某一帧丢失，之后跟踪上的帧仍然可以恢复出运动。另外VO 在运行的过程中采用帧间估计的方法容易导致累计误差。使用地图中的经过优化的路标点和当前图像的匹配以及位姿的优化可以有效降低上述累计误差，这是对定位精度的影响。另外重建的点作为地图的组成，可以用于进行高层的任务如避障等。
+%
+%%如何评价一个路标点的好坏程度？如何如何保存病管理这些路标点呢？路标点的添加删除等管理工作可以放入另外一个结构**Map**中进行。地图中以何种形式保存这些路标呢，一种方法是路标放在图像帧里作为关键帧**KeyFrame**进行保存和提取。关键帧串起来成为一个地图。这样做的好处就是我们使用了关键帧继承了帧的性质，便于以后特征点匹配。在前边累计相机运动的时候参考帧是前一帧图像，这里的参考帧是关键帧的图像。关键帧是相机运动过程中保留了重要信息的最小集合中的元素。理论上关键帧是没有重叠的。后端优化的对象主要是关键帧。
+%{\heiti 设计模式5：系统需要BA，但优化的规模应该被控制。}优化存在于三维点（点的深度）的估计（三角测量）、后端的关键帧中的位姿和路标点的BA、初始化过程的单应矩阵和基础矩阵的优化、P\textit{n}P计算相机位姿。其中规模最大、应该控制的是后端BA，利用$\mathbf{H}$矩阵的稀疏性，可以显式的利用图优化完成BA。为了控制优化规模，使用滑动窗口方法固定要优化的位姿的数量，边缘化一些之前的帧和路标点，详细介绍见\ref{subsect:optimzation-scale-limitation}。 另外一种规模控制的策略是在优化网络中只保留位姿，这种网络称为位姿图\cite{mur2015orb}。经过若干迭代之后早期的路标点已经收敛，因此网络中不再维护这些点。闭环检测中经常利用位姿图的优化。
+\section{鲁棒性改进措施}\label{sect:Robust_design}
+VO系统在实际应用中的主要问题是鲁棒性不足，限制条件过多。本文从传感器的特性建模、系统的前端、后端等方面，包括卷帘快门相机建模、系统初始化、运动模型假设、目标函数、深度图模型，介绍增强鲁棒性的方法。
+
+%在成像过程中，不同的快门方式在很大程度上影响了系统的性能。简单的快门模型是全局快门，也是一般系统对成像过程的假设，然而实际应用中存在大量的卷帘快门相机。因此这里讨论如何应对卷帘快门相机的噪声，以及如何以此构建对应的VO系统。
+%
+%系统的初始化对于视觉定位系统以及视觉惯性定位系统中十分重要，为以后的迭代过程提供了初始值。由于环境和算法的结构的原因，初始化的过程对于相机的运动方式，周围的环境、特征的点数都特定要求。VO 系统的跟踪器需要对运动模型假设以预测点在新来帧中出现的位置，常用的是恒速模型，关于其拓展和对系统鲁棒性的影响以及如何使用IMU辅助会被介绍。常用的特征使用图像金字塔以保证尺度不变性，同样在直接法中也会使用图像金字塔，高层的图像可以增大目标函数的收敛半径，避免目标收敛至局部极小值。因此我们介绍图像金字塔在定位系统中如何使用。
+%
+%目标函数直接影响了系统对外点的敏感性，我们接着讨论了提高系统的鲁棒性的目标函数的设计方法。最后文章讨论了深度图模型中的鲁棒性设计以及{IMU辅助下视觉定位方法}。
+
+
+\subsection{视觉传感器建模}
+很多现代的相机使用CMOS (Complementary Metal Oxide Semiconductor) 图像传感器，成本较低，但使用卷帘快门，图像中每一行像素曝光时间窗口是不一样的。假设快门启动的时间为$t_0$，图像第$i$行的成像时刻为$t_i$，假设图像有$N_r$行，传感器数据读出的时间为$t_s$。因此$t_i=t_0+t_si/N_r$。
+根据Karpenko等\cite{karpenko2011digital,forssen2010rectifying}的分析可知，在快门转动的时间段内，平移运动的影响对于相机模型的影响较小，可以忽略。假设在快门开启时，存在三维点$\mathbf{M}$，该点的成像时刻为$t_i$，对应图像空间中的点为$\mathbf{m}_{i}$。因此有
+\begin{equation}
+  \lambda_{i}\mathbf{m}_{i}=\mathbf{K}\mathbf{R}_{0,i}\mathbf{M}
+\end{equation}
+其中$\mathbf{R}_{0,i}$为$t_0$到$t_i$时刻的旋转矩阵，$\mathbf{K}$为内参数，$\lambda_{i}$为常数。Kerl 等\cite{kerl15iccv}针对RGBD图像使用B样条近似相机运动轨迹，补偿卷帘快门的影响。系统使用了深度值误差以及光度值误差优化计算相机的运动，得到平滑连续的轨迹。
+Pertil等\cite{Pertile2016}使用了IMU来计算$\mathbf{R}_{0,i}$，也就是从快门开启$t_0$ 到时刻$t_i$ 相机运动的旋转矩阵。另外，Kim等\cite{kimdirectRSCamera}定义了行位姿，相机的位姿依赖于图像行变量，相对于行变量可以建模出一个相机的轨迹。将滑动帧窗口方法扩展为近邻窗口，该窗口包含固定个数的B样条控制点。该系统使用IMU对相机在快门动作的期间内估计相机的运动，但是由于CMOS的快门时间戳和IMU的时间戳的同步比较困难，且相机的时间戳不太准确，Guo 等\cite{guo2014efficient}对时间戳不精确的卷帘快门相机设计了一种VIO（Visual Inertial Odometry）系统，其姿态使用线性插值方法近似相机的运动轨迹，位姿使用旋转角度和旋转轴表示，旋转轴不变，对旋转角度线性插值，使用MSCKF （Multi-State Constrained Kalman Filter）建模卷帘快门相机的测量模型。
+
+Dai等\cite{DBLPjournalscorrDaiLK16}对线性卷帘快门模型和均匀卷帘快门模型的相机计算了双视几何的本质矩阵。线性卷帘快门模型中，假设相机的运动为匀速直线运动，均匀卷帘模型中，相机的运动为一个匀角速度运动和一个匀速直线运动。在全局快门相机中，本质矩阵是一个$3\times3$的奇异矩阵。在使用线性卷帘模型的相机下，本质矩阵为一个$5\times5$的矩阵，在使用均匀卷帘模型的相机下，本质矩阵为一个$7\times7$ 的矩阵。因此，在使用卷帘模型时，5点法无法求解本质矩阵。线性卷帘模型和均匀卷帘模型分别需要11和17 个点求解本质矩阵。
+\subsection{视觉里程计前端}
+\subsubsection{初始化}\label{subsect:initialization in vo system}
+单目系统初始化中运动估计常用的方法主要有两种，一种将当前场景视为一个平面场景\cite{faugeras1988motion}，估计单应矩阵并分解得到运动估计，使用这种方法的有SVO，PTAM等。另外一种方法使用极线约束关系，估计基础矩阵或者本质矩阵\cite{tan2013robust,lim2014real}，分解得到运动估计。使用这种方法的有DT SLAM等。初始化中遇到的普遍问题是双视几何中的退化问题。当特征共面或者相机发生纯旋转的时候，解出的基础矩阵的自由度下降，如果继续求解基础矩阵，那么多出来的自由度主要由噪声决定。为了避免退化现象造成的影响，一些VO 系统同时估计基础矩阵和单应矩阵，如ORB SLAM和DPPTAM，使用一个惩罚函数，判断当前的情形，选择重投影误差比较小的一方作为运动估计结果。
+
+单目系统的初始化中还完成像素点的深度估计，单目系统无法直接从单张图像中恢复深度，因此需要一个初始估计。解决该问题的一种办法是跟踪一个已知的结构\cite{davison2007monoslam}。 另外一种方法是初始化点为具有较大误差的逆深度\cite{engel2013semi,engel2014lsd}，在之后过程中收敛至真值。
+
+VO系统的初始化依赖于精确的相机标定和状态初始值。对于系统的初始化，Shen等\cite{shen2015tightly,yang2016monocular}在系统的运动中，建立相邻两帧图像间的关系，对从上一帧惯性坐标系至当前帧相机坐标系进行变换:
+\begin{equation}
+  \label{eq:IMU-camera-initialization-assunption}
+  ^b\mathbf{T}_{k,k+1}\ ^b\mathbf{T}_{c}=\ ^b\mathbf{T}_{c}\ ^c\mathbf{T}_{k,k+1}
+\end{equation}
+根据相机和IMU多次运动分别获得的变换矩阵$^b\mathbf{T}_{k,k+1}$ 及IMU测量的变换矩阵$^c\mathbf{T}_{k,k+1}$，可以标定相机和IMU 之间的变换矩阵$^b\mathbf{T}_{c}$。
+%使用最小二乘方法可以求解旋转偏移$\mathbf{R}^b_c$。
+\subsubsection{运动模型}
+%运动模型影响了机器人运动过程中的那些限制？
+机器人的导航中，实际的运动经常不符合恒速运动模型假设，需设计应对失败的策略。ORB SLAM的运动估计通过跟踪若干匹配的特征点来检测这种失败，这种情况下可跟踪的点的数量较少。因此ORB SLAM设置一定阈值，如果能够跟踪的点的个数小于该阈值，则会在一个更大的范围内进行特征的搜索匹配。DSO系统中如果恒速模型失败，会使用27种不同方向不同大小的旋转来尝试恢复。这些尝试在较高的金字塔层上完成，所以耗时很短。SVO 等方法假设当前时刻的位姿等于上一时刻的位姿，通过最小化光度值误差估计帧间的位姿变化，使用高斯-牛顿方法完成ICIA的迭代。ICIA的使用也限制了帧间视差的最大值，或者是需要较高的帧率（典型的大于70fps）。如表\ref{tab:motion model hypothesis} 所示为几种常用的运动模型在VO系统使用的情形。
+
+\begin{table}
+  \centering\small
+  \caption{运动模型先验假设}
+  \label{tab:motion model hypothesis}
+  \begin{tabular}{c c}
+    \toprule[1.5pt]
+    运动模型假设 & 方法 \\
+    \midrule[1pt]
+    恒速运动模型 & ORB SLAM, PTAM, DPPTAM, DSO\\
+    帧位姿变化为0 & DPPTAM, SVO, LSD SLAM \\
+    帧间仿射变换 & DT SLAM \\
+  \bottomrule[1.5pt]
+  \end{tabular}
+\end{table}
+%另外一些视觉惯性系统中，可以使用IMU辅助预测当前帧的位姿。\cite{leutenegger2015keyframe} 使用最新的IMU位姿测量预测当前帧位姿。\cite{forster2015manifold}中使用对IMU的预积分，辅助SVO作为VIO系统的前端，相对恒速模型以及DSO的随机尝试，该方法更加鲁棒。一般IMU 的更新速度高于帧率，帧间的惯性数据经过积分构成相对的运动约束，对于标准的IMU积分需要已知前一帧时刻IMU的初始状态，然而在优化中，被估计状态改变了，这要求重新估计所有帧间的IMU 积分。使用预积分\cite{forster2015manifold,lupton2012visual} 方法可以避免上述重复积分。
+%\subsubsection{图像金字塔/尺度}
+%生成图像金字塔结构对VO系统的帮助体现在2个方面。在直接法中，使用图像金字塔时，分辨率从高到低，跟踪器的搜索半径变小，目标函数更加接近凸函数，因此收敛半径更大。另外一方面，跟踪器\cite{engel2016direct}以及深度估计器\cite{engel2013semi}在低分辨率图像计算的位姿或深度的初始值然后进入原始分辨率进行进行精细调整，有利于降低计算量。低分率图像中的由于外点较少而估计结果更加鲁邦\cite{tanskanen2013live}。另外一方面在特征法中，图像金字塔增加了特征匹配的尺度不变性。
+%
+%PTAM生成4层金字塔，使得系统对尺度变化更加鲁棒。系统对每层图像提取FAST特征，对每个特征计算Shi-Tomasi评分\cite{shi1994good}，Shi-Tomas评分低于阈值的特征以及非最大值特征被丢弃。每层的Shi-Tomas评分和非最大值抑制的阈值不同，这样可以控制每层的要匹配的特征点的数量。
+%
+%ORB特征使用8个尺度层，尺度因子设为1.2，在特征匹配时候在{尺度空间}找到最大值。另外该方法中尺度还用于深度的估计，因为深度的估计值受到匹配点的尺度的影响，被匹配的点所在尺度越大（金字塔的层数越高），代表运动的距离越大，{该点的深度值}越小。因此在局部地图中的路标点建立时，根据当前的尺度计算该点放到相机中心的距离的上下极限，根据上下极限丢弃不在该范围内的路标点。另外通过检测两帧对应光心到路标点的距离的比例来检查相邻关键帧之间的尺度是否是连续的，对尺度连续的点才做为路标点出现，否则就会丢弃。
+%
+%SVO中在完成图像特征点二维匹配中，以特征点为中心的图像块中，当前帧$k$和参考关键帧$r$之间假设一个仿射变换。对于边缘特征，系统使用了一维（沿着边缘的法向量方向）的特征匹配。如果是点特征，那么寻找最佳的匹配尺度，然后在对应的图像层进行匹配。在直接图像匹配中从金字塔高层至底层，使用直接匹配所得的位姿数据作为初始值带入当前帧和路标点的数据联合以及BA进行优化。
+%
+%直接法中，DSO使用了多尺度进行点跟踪，系统中对不同的层设置了对应的相机的内参数。在初始化中，每个新的帧创建一个6层图像金字塔。系统每个新来帧对图像金字塔中从当前使用的层开始逐层向下计算光度学误差、Hessian矩阵和Hessian块，优化完成运动估计。采用下采样的方式，以允许在联合优化框架中实时处理数据。
+
+\subsection{视觉里程计后端}
+\subsubsection{目标函数}
+上文中我们讨论了直接法以及间接法中使用的目标函数，目标函数的设计影响了VO系统鲁棒性。在最大后验估计的定位问题中，在似然函数中如果假设噪声的分布为高斯分布，那么目标函数中负对数似然函数等价于$\ell_2$ 范数。如果假设噪声的分布为拉普拉斯分布，负对数似然函数对应$\ell_1$ 范数。在优化中，$\ell_2$范数对噪声敏感，噪声的存在导致估计的结果与实际参数相差较大，因而改用M估计器替换平方残差函数$\rho(r_i)$。 如表\ref{tab:m-estimator}所示为几种常用的鲁棒估计器的具体表达式。
+
+Ozyesil等\cite{ozyesil2015robust}使用了$\ell_1$ 和$\ell_2$两种范数结合的一种范数IRLS\cite{daubechies2010iteratively}（Iteratively Reweighted Least Squares），IRLS使用迭代的方式解决带权重的$\ell_p$范数的优化问题。VO系统常用的鲁棒目标函数如表\ref{tab:robust-objection-function-in-vo} 所示。在恢复相机的运动中，相机的位置估计容易被噪声干扰，方向的估计在精度和鲁棒性方面则相对比较准确。Ozyesil 等\cite{ozyesil2015robust}引入两步估计方法，首先估计点对的相对方向，然后从点对的相对方向中恢复每个点的3D位置。位置估计的目标函数形式化为最小化方向的误差，其中位置表示为方向和距离的乘积，因为方向已知，因此优化对象变为距离，使用IRLS方法迭代优化目标值。Sunderhauf等\cite{sunderhauf2012switchable}使用可切换约束的目标函数，在优化中识别并丢弃外点。另外该系统利用可切换的闭环检测约束以及可切换的先验约束，避免对闭环检测的误报。
+
+\begin{table}
+  \centering\small
+  \caption{常用的鲁棒估计器}
+  \label{tab:m-estimator}
+  \begin{tabular}{c c}
+    \toprule[1.5pt]
+    类型 & $\rho(x)$\\
+    \midrule[1pt]
+    $\ell_2$ & $x^2/2$\\
+    $\ell_1$ & $|x|$ \\
+    $\ell_1-\ell_2$ & $2(\sqrt{1+x^2/2}-1)$\\
+    $\ell_p$ & $\frac{|x|^\nu}{\nu}$\\
+    Huber& $\begin{cases}
+    x^2/2\quad \text{if} \quad |x|\leq c\\
+    c(|x|-c/2)\quad\text{if} \quad |x| \geq c\\
+\end{cases}$\\
+Cauchy& $\frac{C^2}{2}\log(1+(x/c)^2)$\\
+Tukey  & $\begin{cases}
+\frac{c^2}{6}(1-[1-(x/c)^2]^3)\quad\text{if} \quad |x|\leq c\\
+c^2/6\quad\text{if} \quad |x| \geq c\\
+\end{cases}$\\
+t分布 & $\frac{\nu+1}{\nu+(r/\sigma)^2}$\\
+    \bottomrule[1.5pt]
+  \end{tabular}
+\end{table}
+
+\begin{table}
+  \centering\small
+  \caption{VO系统中的鲁棒目标函数设计}
+  \label{tab:robust-objection-function-in-vo}
+  \begin{tabular}{c c}
+    \toprule[1.5pt]
+    VO 系统&目标函数框架\\
+    \midrule[1pt]
+    PTAM    &Tukey biweight\\
+    DSO&Huber\\
+    DT SLAM&Cauchy distribution\\
+    DPPTAM&Reweighted Tukey\\
+    DTAM&weighted Huber norm\\
+    \bottomrule[1.5pt]
+  \end{tabular}
+\end{table}
+% \begin{table}
+%   \centering
+%   \caption{VO系统中的鲁棒目标函数设计}
+%   \label{tab:robust-objection-function-in-vo}
+%   \begin{tabular}{c c c c c c}
+%     \toprule[1.5pt]
+%     VO 系统&PTAM&DSO&DT SLAM&DPPTAM&DTAM\\
+%     \midrule[1pt]
+%     目标函数框架&Tukey biweight&Huber&Cauchy distribution&Reweighted Turkey&weighted Huber norm\\
+%     \bottomrule[1.5pt]
+%   \end{tabular}
+%\end{table}
+
+
+%\begin{table}
+%  \centering\small
+%  \caption{VO系统中多尺度金字塔使用使用}
+%  \label{tab:pyrmaid in vo systems}
+%  \begin{tabular}{c c c c c}
+%    \toprule[1.5pt]
+%    VO系统 & ORB SLAM & DSO & PTAM &SVO \\
+%    \midrule[1pt]
+%  层数 & 8 & 6 & 4 & 4\\
+%  特征类型 & FAST &None&FAST&FAST\\
+%  %特征描述子 & L.P.P &
+%  \bottomrule[1.5pt]
+%  \end{tabular}
+%\end{table}
+
+% \subsubsection{外点检测}
+% LSD SLAM通过监测每个像素深度值的概率分布进行外点检测。跟踪线程记录每个像素点是否成功匹配，随后对应增加或者减小该点为外点的概率。
+%
+% DSO的策略是尽早的删去那些可能外点。一是沿着外极线搜索中，如果点不足够具备显著性差异的点会被删除，从而会显著的降低错匹配的概率。其次是超过光度误差极限的可观测点被删除，其中广度误差极限是根据参考帧的残差的中间值选取的。对于质量差的关键帧那么这个阈值比较高，对好的帧，阈值会比较低。
+\subsubsection{深度图}\label{subsubsect:depth-map-model}
+在基于直接法的VO系统（DSO、LSD SLAM）中，常常需要估计点的深度，原始的深度并不表现为类高斯分布，而是带有长拖尾。在室外应用中，存在很多无穷远点，初始值难以设定，因此使用高斯分布描述不准确。逆深度（原始深度的倒数）的分布更加接近高斯分布，具备更好的数值稳定性。常用的深度图模型如表\ref{tab:depth model for vo} 所示。
+
+像素点的深度估计方法有滤波器方法和非线性优化方法。其中SVO、DSO将深度建模为一个类高斯模型，然后使用滤波器估计。另外一种方法对深度图构建一个能量函数，如LSD SLAM、DTAM、DPPTAM 等，然后使用非线性优化方法最小化能量函数。该函数包括一个光度误差项以及一个正则项用来平滑所得结果。
+
+DPPTAM \cite{concha2015dpptam}首先对图像中梯度明显的点估计深度，由此得到半稠密的深度图。梯度明显的点占图像所有点的比例较小，{因此要更新的点数较少}，可以实时完成位姿估计。另外这些点还用于估计平面结构，其深度图使用一致性假设，包括三个方面。
+\begin{itemize}\setlength\itemsep{0em}
+    \item 极线方向和梯度方向垂直的点的逆深度值是不可靠的。
+    \item 时间一致性。相邻若干时刻同一个像素点的逆深度是相似的。
+    \item 空间一致性。相邻像素的逆深度值是相似的。
+  \end{itemize}
+对于其他点的深度估计通过最小化一个由光度值误差、深度距离和梯度正则项组成的能量函数完成。光度值误差同直接法中光度值不变性假设。另外两项为正则项，深度距离计算了被估计深度距离分段平面的距离。梯度正则计算了深度图的梯度，用于平滑深度图。DTAM\cite{newcombe2011dtam}中的能量函数除光度值误差、梯度正则之外，还使用了一个对偶项，避免了线性化目标函数并迭代优化导致的重建结果损失深度图细节，这样还可以使用原始对偶方法快速完成优化。原始对偶方法不同于原始方法以及对偶优化方法，基本思想是从对偶问题的一个可行解开始，同时计算原问题和对偶问题，求出原问题满足松弛条件的可行解，这个可行解就是最优解。
+
+\begin{table}\centering
+\small
+  \begin{minipage}[t]{\linewidth}
+  \centering
+  \caption{深度图模型}
+  \label{tab:depth model for vo}
+    \begin{tabular}{c c }
+      \toprule[1.5pt]
+      VO系统&深度模型\\
+      \midrule[1pt]
+      SVO&高斯混合均匀模型\\
+      DSO&高斯模型\\
+      DT SLAM&极线分段约束\cite{chum2004epipolar}\\
+      DPPTAM半稠密&一致性假设\\
+      DPPTAM稠密&能量函数$^{1}$\\
+      DTAM&能量函数$^{2}$\\
+      LSD SLAM&能量函数$^{3}$\\
+      \bottomrule[1.5pt]
+    \end{tabular}
+  \end{minipage}
+
+  \raggedright
+  \footnotesize{
+  [1]. 光度误差+图像空间平滑+平面块假设。
+
+  [2]. 使用光度误差和图像空间平滑（正则）
+
+  [3]. 光度误差和关键帧间方法惩罚。
+  }
+\end{table}
+
+%%\subsubsection{滑动窗口边缘化}
+%
+%\subsubsection{估计一致性}\label{subsect:estimator-inconsistency}
+%为了完成数据的融合，对于优化方法，需要将系统线性化以完成迭代，对于滤波器方法同样需要线性化以完成状态更新及传播。后者仅线性化一次，前者会线性化多次。滑动窗口方法迭代的完成测量的二次线性化\cite{forster2015manifold}。多次线性化会降低线性化误差产生影响。小的线性化误差才能保证估计的一致性，线性化误差过大或者存在未建模的线性化误差导致估计器对结果过于乐观，引起估计器的不一致性。测量的雅克比矩阵的计算使用最新的状态时，估计器累计伪信息，估计预期精度要高于实际估计结果，称之为结果具有不一致性。
+%
+%一种常用的解决方式使用FEJ（First Estimate Jacobian \cite{huang2009first})。Huang等证明了系统和测量的雅克比矩阵的计算使用最新的状态估计时，系统线性误差可观测子空间的维数高于实际。FEJ方法修改使用first-ever可用状态估计计算雅克比矩阵可以保证算法的一致性。
+%
+%\cite{dong2011motion}证明了当没有可用的先验估计时，边缘化导致了状态信息矩阵的秩增加，反之则秩保持相同。因此提出人为制造先验信息，这样只需要对滑动窗口方法稍加修改，得到Prior-Linearization (PL) fixed-lag smoothing 方法。在估计过程中创建的先验信息的数量较小，因此只影响少量状态的线性化点。
+%%\section{语义分析}\label{sect:semantic}
+\section{语义分析与深度学习}\label{subsect:semantic}
+在上文中我们介绍了改进视觉里程计鲁棒性的措施，视觉语义分析以及深度学习的应用同样对提高系统的鲁棒性具有帮助。本节围绕语义分析以及深度学习方面的相关问题展开介绍。
+\subsection{语义分析}
+语义分析根据结构型数据的相似特性对像素（区域 )进行标记，对场景中的区域分类。粗粒度的语义分析应该包括物体检测、区域分割等。语义分析和位姿估计之间相互影响，可以体现在两个方面，一方面语义分析能够提高位姿及建图的精度\cite{salas2013slam++}。另一方面VO的测量结果降低语义分析的难度。%，在SLAM系统的基础上可以完成3D 特征描述和预测的任务，这样可以提高物体识别模块的性能\cite{pillai2015monocular}。%本文主要围绕前者讨论。%如表\ref{tab:semantic-vo-system-character} 所示为几种语义分析VO 系统的相关特点。
+
+在基于稀疏特征的VO系统中，场景重建为稀疏点云；在稠密的VO系统中，场景重建为连续的表面；而在含有语义分析的系统中会建立一个语义地图，该地图中组成元素为物体，而不是度量地图中的{稠密或者稀疏}的点。SLAM++系统\cite{salas2013slam++}中，语义地图表示为一个图网络，其中节点有两种，一种是{相机在世界坐标系}的位姿，另外一种是物体在世界坐标系的位姿。物体在相机坐标系的位姿作为网络中的一个约束，连接相机节点和物体节点。另外网络中还加入了平面结构等约束提高定位的精度。%系统提供6 自由度的相机对物体的位姿约束，用于物体图以及位姿图的优化。SLAM++ 使用GPU 并行执行物体的识别，在物体表面中的点使用通用霍夫变换得到一个4 维的描述子PPF （Point Pair Features），描述点的相对位置，点所在表面的法向量方向。这些描述子将图像中的点投票至参数空间，根据在预先建立的物体数据库的相似度识别当前定位物体。使用向量化二维搜索可以快速完成图像中特征和模型数据库中相似特征的匹配。系统的前端定位部分在VO 系统基础上增加了物体识别的并发线程，在后端优化中，系统的目标函数为
+%\begin{equation}\label{eq:constraint-in-semaintic-map}
+%\begin{split}
+%  E_m=&\sum_{Z_{i,o_j}}\|\log(Z^{-1}_{i,o_j}\cdot T^{-1}_{wi}\cdot T_{wo_j})\|_{\Sigma_{i,j_o}} + \\
+%  &\sum_{Z_{i,i+1}}\|\log(Z^{-1}_{i,i+1}\cdot T^{-1}_{wi}\cdot T_{wi+1})\|_{\Sigma_{i,i+1}}
+%  \end{split}
+%\end{equation}
+%其中$Z^{-1}_{i,o_j}$表示物体$j$在时刻$i$的6 自由度位姿测量结果（相对相机坐标系），$\Sigma_{i,j_o}$表示测量协方差矩阵。$T_{wi}$ 表示相机在时刻$i$相对世界坐标系的位姿，$T_{wo_j}$表示物体$j$相对世界坐标系的位姿表示。这些对应物体的约束（公式中的第一项）。第二项使用图像点的约束，该约束类似普通VO系统中使用的重投影误差。重投影误差的计算是在图像空间中，而该误差是在三维空间中，因此相机的内参数并不参与计算。$Z_{i,i+1}$表示相邻帧之间的相对位姿变换，$\Sigma_{i,i+1}$表示对应的测量协方差矩阵。另外文章还在优化中增加了结构性先验约束，如平面约束，由于很多物体放在地面上，他们和地面的位姿关系为$P_{o_j,f}$。因此目标函数变为
+%\begin{equation}
+%  E_{m\&p}=E_m+\sum_{P_{o_j,f}}\left\|\log(P^{-1}_{o_j,f}\cdot T^{-1}_{w,o_i}\cdot T_{wf})\right\|_{\Sigma_{o_j,f}}
+%\end{equation}
+%其中$T_{wf}$表示地面相对世界坐标系的位姿。
+
+MO-SLAM（Multi Object SLAM）\cite{dharmasiri2016mo}对于场景中重复出现的物体进行检测，该方法不需要离线训练以及预制物体数据库。系统将重建的路标点做分类，标记该点所属的物体类别。一个物体表示为一个路标点集合，相同的物体的不同实例的路标点之间存在如下关系
+\begin{equation}\label{eq:duplicated-instance-constraint}
+  \mathbf{P}^m_{\mathbf{I}_j}=E^m_{j1}\mathbf{P}^m_{\mathbf{I}_1}
+\end{equation}
+其中，$\mathbf{P}^m_{\mathbf{I}_j}$表示物体$O_m$的实例$\mathbf{I}_j$在系统中的路标点，$\mathbf{P}^m_{\mathbf{I}_1}$表示物体$O_m$的实例$\mathbf{I}_1$路标点。系统对于生成的关键帧建立ORB 描述子的单词树，在新的关键帧和候选关键帧之间进行汉明距离匹配。如果匹配点的数量不够，那么识别线程停止处理当前帧，等待下一个关键帧。使用RANSAC框架初始化一个位姿变换，使用方程\eqref{eq:duplicated-instance-constraint} 最小化重投影误差。另外目标函数中增加同类物体不同实例的空间变换约束以提高精度。
+Choudhary等\cite{choudhary2014slam}对SLAM系统增加了在线物体发现和物体建模方法，利用检测到的物体作为路标点帮助机器人定位，有利于系统回环检测。Dame 等\cite{dame2013dense} 利用3D形状先验完成稠密重建，在PTAM系统基础上使用一个滑动窗口进行物体检测，添加物体的位姿约束至目标函数，以提高系统定位精度。%文章使用GP-LVM 表示形状先验。表达形状的方法一般是通过降维至低维隐含形状空间，由此形成一个关于位姿和形状的能量函数进行优化。%另外在一些SFM （Structure From Motion）的文献中同样出现了一些语义分析和几何结构恢复的相关内容，详细参考\cite{bao2011semantic,wilson2013network,jiang2012seeing,roberts2011structure}。
+% Bae等提出了一种语义SFM系统\cite{bao2011semantic}可以同时估计相机的位姿，3D地标和物体的标签。系统除了建立几何约束，还利用了场景中的物体的语义和几何性质。不同视图之间的物体的测量为位姿估计提供了额外的约束，使得估计结果更为鲁棒，物体的检测更加精确。
+%\cite{castle2010combining,choudhary2014slam}
+%\begin{table*}[t]\centering
+%\small
+%  \caption{语义分析VO系统特点}
+%  \label{tab:semantic-vo-system-character}
+%  \centering
+%  \begin{minipage}[t]{\textwidth}\centering
+%  \begin{tabular}{c c c c c}
+%    \toprule[1.5pt]
+%    VO系统&SLAM++&MO SLAM&castle,2010\cite{castle2010combining}&choudhary,2014\cite{choudhary2014slam}\\
+%    \midrule[1pt]
+%    物体识别特征&PPF&ORB&SIFT&CSHOT$^{[1]}$\\
+%    后端优化约束&物体位姿、平面结构&同类物体不同实例约束&单应性约束&物体位姿\\
+%    物体数据库&3D物体模型&否&平面物体单目图像&否\\
+%    \bottomrule[1.5pt]
+%  \end{tabular}
+%
+%  \raggedright
+%  \footnotesize{
+%  [1]. CSHOT 使用描述子，常用于描述对应图像区域的点，详细参见\cite{alexandre20123d}。
+%  }
+%\end{minipage}
+%\end{table*}
+
+%保持空间相对关系的数据结构称为地图。常用的地图为度量地图，表示了空间的几何关系。另外一种拓扑地图的主要内容是环境中的物体，设施，事件以及几者相互之间的关系，这种地图称为语义地图。\cite{nuchter2008towards}首先完成环境的三维点云地图构建，然后标记其中的点为不同的种类，如地面、墙壁，天花板，门等。{文献}\cite{kuipers2000spatial}中将环境建模一个空间语义层级结构，每层语义对应不同等级的特征表示。%机器人在环境中行进时，机器人建立环境的认知地图，这个认知地图是一个符号化表示，包含了一系列描述不同类物体的结构（如道路、区域、墙壁等），每个类包含一个属性集合，每个实例对应一个实例化类的属性值。
+%\cite{pronobis2012large}中定义了语义地图空间表示的多层结构，其中包括感知层，位置放置层，种类层和概念层\cite{cummins2009highly,galindo2005multi,nieto2010semantic}。% 其中概念层定义了物体的关系如“is-a”，“has-a”等关系。基于属性的语义地图定义了物体的种类，放置位置，形状、大小、外表等，详细参见。
+
+高层特征具备更好的区分性，同时帮助机器人更好完成数据关联。DARNN\cite{xiang2017darnn}引入数据联合（Data Association，DA）下的RNN（Recurrent Neural Network），同时对RGBD图像进行语义标注和场景重建。将RGB图像以及深度图像分别输入全卷积网络，在反卷积层加入数据联合RNN层，将不同帧图像的特征进行融合，同时能够融合RGBD图像和深度图像。该文章使用KinectFusion\cite{newcombe2011kinectfusion} 完成相机的跟踪，估计当前相机的6DOF 位姿，将3D场景表示为3D 体素，保存于TSDF （Truncated Signed Distance Function）。
+Mccormac等\cite{mccormac2016semanticfusion} 使用ElasticFunsion完成SLAM的稠密重建及位姿估计任务，使用FCN（Fully Convolutional Network）完成语义分割，不同的种类使用面元（Surfel）表示，使用贝叶斯更新器跟踪分割该面元的概率分布，使用SLAM生成的点匹配更新面元的概率分布。
+针对建图规模大、稠密重建速度慢以及室外环境建图困难等问题，Vineet等\cite{vineet2015incremental}使用基于CRF的体积平均场方法进行图像分割，同时基于KinectFusion方法完成稠密重建。%该文章使用双目的图像可以直接完成深度估计，使用FOVIS 方法进行位姿估计，进行稠密重建，并。
+\subsection{深度学习方法}\label{subsect:deep-net vo}
+人类可以不监督的完成认知任务，通过在代理任务（如本体运动估计）的监督学习可以解决其他的任务(如深度理解)，避免了显式的监督学习。一些任务学习的泛化能力强，可以作为其他任务的基础。另外深度网络的应用中，Zamir等\cite{zamir2016generic}提出了一种多任务学习的方法，经过特征匹配任务训练的网络不需要重新调整参数就完成相机位姿的估计，此过程体现了深度网络的抽象能力。该网络表现为一种通用的能够泛化至新的任务的深度网络感知系统。
+
+基于深度学习的方法要解决的一个基本的问题是如何得到训练所使用大规模的数据集合，KITTI和TUM数据集中除了图像序列，还给出了图像的深度以及相机采集图像时的位姿，详细见\ref{subsubsect:datasret-for-validation}。如果不存在VICON或者高精度IMU等数据作为真值，只有单纯图像序列的数据集，可以使用SFM方法计算每一帧图像的对应相机运动参数。%另外一种方法是使用CAD模型的产生物体的在对应视图中的投影，使用背景对CAD 模型进行渲染。这里首先介绍几种文献中出现的深度网络可以解决的问题，然后讨论定位问题中常用的网络训练方式和常见的网络结构。
+%\subsubsection{要解决的问题}
+
+%使用深度学习网络要解决的问题和一般的VO系统致力于解决的问题有一定的差异，考虑到深度网络的特点，
+现有的深度学习还无法完成一个完整的视觉定位系统，但有望能够解决传统的VO方法难以解决的问题，如重定位\cite{kendall2015posenet}、长极线匹配（\cite{choy20163d,altwaijry2016learning}）、数据融合\cite{rambach2016learning} 等。在一个完整的VO系统中，深度网络一般作为一个辅助系统，利用高层次的语义分析，目标识别的功能形成基于语义级的定位约束提高系统的精度和鲁棒性。如表\ref{tab:deep-lolcalization-system-character}所示为一些深度学习网络定位系统的特点，包括要解决的问题，输出结果等。
+
+在视差大（基线宽），而运动模型预测不好的状态下，由于搜索区域较大，VO系统中容易发生点匹配失效。另外一些情况如局部外观变化或者自遮挡，点匹配也容易失效。Choy 等\cite{choy20163d}针对该问题结合CNN 和RNN网络，利用物体的形状信息对单帧图像完成三维重建。由于LSTM网络可以学习长期历史信息，在训练中网络针对同一物体不同视角的图像的信息进行处理，输出物体的一个3D栅格。如果已知物体的外表和形状，使用这些先验信息，在大视差下仍然可以完成特征匹配以及三维重建。使用深度网络进行深度图估计可以省略中间步骤，如形状外表的学习以及特征匹配，直接进行三维重建\cite{kar2015category,vicente2014reconstructing,choy20163d}，但需要使用预知的3D模型数据。
+
+Doumanoglou等\cite{Doumanoglou_2016_CVPR,tejani2014latent} 利用隐类型霍夫森林（LCHF，Latent Class Hough Forest）同时进行物体识别和位姿估计，LCHF 在训练中使用正样本和回归保持类分布在叶节点上。在测试中类分布作为隐变量被迭代更新。Doumanoglou等\cite{Doumanoglou_2016_CVPR}通过稀疏自编码器提取对应的特征向量，然后对特征向量构成HF。在Hough空间中统计各节点投票数，得到最终的物体类别的位姿。使用深度网络可以从单帧图像中估计物体的位姿，该网络在识别物体的同时估计物体的姿态。Wohlhart 等\cite{wohlhart2015learning} 使用3D描述子表示物体的特征以及物体的位姿，使用欧拉距离计算描述子之间的相似度。%这样通过网络训练的描述子使得同类物体不同位姿之间以及不同的物体之间保持足够的距离，并且前者小于后者。%因此设计了两种元组，分别是三元组和二元组。三元组中两个元素之间距离比较小，因此目标函数的一项是要最大化三元组中两个近似和余者之间的距离。另外二元组来自相同物体的相似位姿，最小化两者之间的距离。
+
+% \begin{table}
+%   \caption{深度网络定位系统特点}
+%   \label{tab:deep-lolcalization-system-problem-character}
+%   \begin{minipage}[t]{\textwidth}
+%     \centering
+%     \begin{tabular}{c c c c c}
+%       \toprule[1.5pt]
+%       定位系统&目标函数&输入数据&输出结果&作用\\
+%       \midrule[1pt]
+%       LSM$^{[1]}$\cite{agrawal2015learning} &SFA$^{[2]}$&2帧图像&位姿  &运动估计\\
+%       posenet&位姿误差\eqref{eq:pose-residual-loss}&RGB单帧图像&位姿&重定位\\
+%       3D-R2N2\cite{choy20163d}&体素交叉熵$^{[4]}$&单帧或多帧图像&图像重建&三维重建\\
+%       Learning To Fuse\cite{rambach2016learning}&位姿误差&IMU& 位姿&数据融合\\
+%       \bottomrule[1.5pt]
+%     \end{tabular}
+%   \end{minipage}
+%   \footnotesize{
+%   [1]. Learning to see by moving。
+%
+%   [2]. SFA使用图像的密集像素匹配目标（损失）函数详细参见\cite{chopra2005learning}。
+%
+%   [3]. 体素是一个三维向量，对应像素（二维），具有三维坐标，表示点对应的空间位置的颜色值，详细参见\cite{lengyel2010voxel}。
+%   }
+% \end{table}
+%\subsubsection{网络训练}
+使用深度网络完成定位估计的一种方法是利用其他任务训练的网络及参数，迁移至定位估计，如（PoseNet\cite{kendall2015posenet}，FuseNet\cite{hazirbas2016fusenet})。使用端到端的训练方式中，图像对应的相机位姿数据作为回归结果，损失函数为
+\begin{equation}\label{eq:pose-residual-loss}
+  L_i=\left\|\mathbf{p}_i-\hat{\mathbf{p}}_i\right\|_2+\beta\cdot\left\|\mathbf{q}_i-\frac{\hat{\mathbf{q}}_i}{\|\hat{\mathbf{q}}_i\|}\right\|_2
+\end{equation}
+这里$\mathbf{p}_i$及$\hat{\mathbf{p}}_i$为位置的真值和预测值，$\mathbf{q}_i$以及$\hat{\mathbf{q}}_i$为姿态四元数的真值和预测值。
+针对单帧图像，Kenda等\cite{kendall2015posenet}训练一个端到端网络，迁移学习针对分类任务训练的网络(GoogLeNet)，修改末端结构为回归层，利用SFM标注的数据集重新训练。DeTone等\cite{detone2016deep}训练HomograghNet用于估计帧间单应矩阵，通过产生随机透视变换，对数据集中的图像做变换，原始图像和变换后的图像一同输入网络进行训练。
+
+Liu等\cite{liu2015deep}从深度值的连续性出发，将深度值预测转化为条件随机场问题，使用深度结构化学习模式，构造连续条件随机场的一元和二元势函数。根据相邻区域的像素的深度一致性信息，点的深度差作为一元势函数，计算区域间颜色差异，颜色直方图差异和纹理差异，这些差异构成二元势函数。
+
+\begin{table*}[t]\centering
+\small
+  \caption{深度网络定位系统特点}
+  \label{tab:deep-lolcalization-system-character}
+  \begin{minipage}[t]{\textwidth}\centering
+    \begin{tabular}{c c c c c c}
+      \toprule[1.5pt]
+      定位系统&目标函数&输入数据&输出结果&网络类型&面向的问题\\
+      \midrule[1pt]
+      LSM$^{1}$\cite{agrawal2015learning} &SFA$^{2}$&2帧图像&位姿 & CNN &运动估计\\
+      PoseNet&位姿误差\eqref{eq:pose-residual-loss}&RGB单帧图像&位姿&GoogLeNet$^{3}$&重定位\\
+      3D-R2N2$^{5}$\cite{choy20163d}&体素交叉熵$^{4}$&单/多帧图像&图像重建&CNN+LSTM&三维重建\\
+      LST$^{6}$\cite{rambach2016learning}& 位姿误差&IMU&位姿&LSTM&数据融合\\
+      MatchNet&相似度交叉熵$^{7}$&2帧图像&匹配度&CNN+FC&图像块匹配\\
+      GVNN&光度值误差&当前/参考图像&位姿&CNN+SE3$^{8}$&视觉里程计\\
+      HomographNet&图像点误差&2帧图像&单应矩阵&CNN&估计单应矩阵\\
+      SFM-Net\cite{vijayanarasimhan2017sfm} & 相机运动误差 & RGBD图像 & 相机运动、三维点云 & 全卷积 & 相机运动估计和三维重建\\
+      SE3-Net\cite{byravan2016se3} & 物体运动误差 & 点云数据 & 物体运动 & 卷积+反卷积 & 刚体运动\\
+      \bottomrule[1.5pt]
+    \end{tabular}
+  \end{minipage}
+    \raggedright
+  \footnotesize{
+  [1]. Learning to see by moving。
+
+  [2]. SFA使用图像的密集像素匹配目标（损失）函数，详细参见\cite{chopra2005learning}。
+
+  [3]. GoogLeNet是一种22层的CNN网络，常用于分类识别等。
+
+  [4]. 体素是一个三维向量，对应像素（二维），具有三维坐标，表示点对应的空间位置的颜色值，详细参见\cite{lengyel2010voxel}。
+
+  [5]. 3D-R2N2(3D Recurrent Reconstruction Neural Network)
+
+  [6]. Learning To Fuse。
+
+  [7]. 文章在全连接层中使用softmax层，因此输出为0/1值，全连接层输入为拼接的特征点对，目标函数为sofmax输出值的交叉熵误差。
+
+  [8]. 除了使用SE3层，还有包括投影层，反投影层等。
+  }
+\end{table*}
+%针对多幅图像，文献通过多幅图像使用CNN网络可以恢复单应矩阵，单应矩阵可以计算出帧间的位姿变化。该过程中可以利用在估计单应矩阵的深度网络中，通过产生随机的透视变换作为标签，对数据集中图像做变换，得到变换后的图像。用矩形框裁剪。原始图像和变换后的图像输入至卷积网络病进行训练。这样训练的网络用于估计帧间图像的单应矩阵，通过单应矩阵以及几何约束可以计算出帧间的位姿变化。文献把图像流送入两个相同的卷积网络，两个底层卷积网络流计算对应输入图像的特征，一起送入顶层网络。顶层网络有卷积网络和全连接网络组成。文献经两个图像流分别输入至基层卷积网络，然后汇聚至顶层卷积层，输出为回归预测的位姿向量，转换为变换矩阵，通过深度图估计得到三维点，对该三维点利用估计的变换矩阵和真值对应的变换矩阵分别将三维点变换至当前帧对应的相机坐标系下并进行投影，计算其误差值的L2 范数作为优化目标。
+%当视角变化，原来被遮挡的部分出现，网络会更新被遮挡部分的状态，保持其他部分的状态，LSTM网络获取到物体多个视图的图像，能够处理物体的自遮挡问题。%MatchNet\cite{han2015matchnet,agrawal2015learning}使用两个CNN网络串流，网络数据汇合后使用全连接网络估计位姿。
+
+%\subsubsection{网络结构}
+%网络的输入一般为卷积结构，提高系统的鲁棒性。%卷积结构之后网络层中，全连接层（\cite{agrawal2015learning,liu2015deep,kendall2015posenet}）、LSTM层（\cite{choy20163d}）、以及空间变换层( 等。
+Handa等\cite{byravan2016se3,Handa:etal:ECCVW16,jaderberg2015spatial}提出了空间变换层，SO(3)层对应旋转变换，参数可以表示为一个三维向量，SE(3)层在SO(3)层的基础上增加了一个平移，参数为一个6 维向量。Sim(3)层在SE(3)的顶层有一个尺度因子，投影层将3D点投影到图像平面，参数为焦距和光心位置。
+
+双塔结构的网络（如MatchNet\cite{han2015matchnet}，LSM\cite{agrawal2015learning}）的输入为当前帧图像及参考帧图像，双塔CNN网络使用了相同的参数，为保证在训练结束之后仍然保持相同的参数，在训练时同步更新两个子网络参数。Xiang等\cite{xiang2017darnn}在双塔结构输入的两个通道分别是RGB图像和深度图像，在卷积层后使用数据联合融合两个通道的卷积信息以及RNN处理帧间的信息实现深度重建。
+
+另外一种常用结构为编解码器结构，如FuseNet\cite{hazirbas2016fusenet}、3D-R2N2\cite{Doumanoglou_2016_CVPR}，使用卷积层作为编码器，解卷积层作为解码器，LSTM置于编码器和解码器中，并融合来自深度图像以及RGB图像信息。Choy等\cite{choy20163d}利用LSTM网络存储信息的特点，卷积层作为编码器，经过LSTM网络，数据进入反卷积层。编码器将图像转换至低维的特征空间，然后更新网络状态，通过反卷积层解码隐含层得到重建的三维点。
+
+\section{定位方法性能评价}\label{sect:Verification}
+本节介绍视觉定位方法的验证方法。首先介绍一些性能的评价方法，然后介绍相关的数据集和工具库。
+%\subsection{评价基准}\label{subsect:ficucial system}
+%%三维空间的定位问题的困难来自于多个方面
+%%\begin{enumerate}
+%%\item 验证定位算法误差的基准系统的要么精度较高但使用复杂，成本较高，要么成本较低，精度不足。
+%%\item 传感器的测量误差。不同的传感器的测量的基准，数据转换的时候容易丢失精度。来自于传感器建模的误差。传感器测量数据获取的时间空间限制。
+%%\item 机器人测量相对于运动的滞后性。
+%%\item 传感器测量和机器人状态的间接关联。
+%%\end{enumerate}
+%视觉定位的基准系统从点跟踪的模式上分类，对于位姿估计存在两种方式由内而外（inside out）和由外而内（outside in）。前者的测量器在被测量物体内部，经常使用固定于环境中标志（如 AprilTag\cite{olson2011tags,kikkeri2014inexpensive}）等，适用于被测物体结构简单，位姿视为统一整体的情况。后者测量器位于被测物体外部，经常使用多个相机观察被测物体（如运动捕捉系统VICON\cite{noonan2009stereoscopic}，OptiTrack），适用于被测物体分块，包含多个位姿，如人体位姿估计等。VICON作为一种运动捕捉系统，对于不同的被测对象通常需要布置不同数量的相机，而且成本也很高，对于光照条件要求比较高。对于视觉定位算法来讲，{使用标志可以简便易行的构造一种基准系统}，因为被测试对象和基准系统可以使用同一套视觉系统。标志定位方法受限于光照条件良好，具备足够空间放置预设大小平面的情景，是成本比较低、易拓展的、适合室内环境的移动定位基准系统。
+%
+%另外一种精度较高的基准系统为DGPS\cite{gan2007implement}（Differential Global Positioning System）。与GPS类似，DGPS 依靠外部系统获取本身的位置信息，当被定位系统和外部系统之间的通信不流畅时，这会导致定位失败。DGPS中一种常用的技术为RTK GPS，该方法使用基准站和流动站，两者同时接收同一时间相同GPS卫星发射的信号，基准站所获得的观测值与已知位置信息进行比较，得到GPS 差分改正值。精度在毫米级，可以作为视觉定位方法的评价基准，但是成本比较高，受限于视野开阔的室外环境，并且需要摆放基准站。
+
+%\begin{table*}[t]\centering
+%\caption{视觉定位基准系统}\label{tab:ficucial system list}
+%\begin{tabular}{c c c c c}
+%\toprule[1.5pt]
+%item & 标志 & DGPS & VICON & IMU \\
+%\midrule[1pt]
+%精度 & 高 & 低 & 高 & 中 \\
+%成本 & 中 &　高　&　高　& 高 \\
+%适用室内 & 是 & 否 & 是 & 是 \\
+%适用室外 & 是 & 是 & 否 & 是 \\
+%光照要求 &　有　&　无　&　有　&　无 \\
+%传感器类型& extero& extero & extero&intero \\
+%测量频率　& 帧FPS，较快 & 100-1kHZ & 帧FPS，慢 & 100-1kHZ \\
+%输出延时 & 低 & 低 & 高 & 低 \\
+%跟踪点方式& inside & no & outside & non \\
+%信息完整度 & 完整 & 不完整 & 完整 & 完整  \\
+%\bottomrule[1.5pt]
+%\end{tabular}
+%\end{table*}
+%注意，我们这里说标志方法的精度高，假设相机的标定精度较高，标志中的点的数量足够，以及在图像中分布范围较大的情况下。这样仍然难以和DGPS 的设备对比。
+\subsection{性能评价}\label{subsect:precision-calculation}
+如果验证数据集中提供了相机位姿的真值，那么可以直接比较测量值和真值，称为绝对轨迹误差。这时候进行性能评价是比较直接的，但是实际上运动相机在连续采集图像过程中难以获得相机位姿的真值，参见表\ref{tab:vo dataset}。为完成算法的验证，Engel等\cite{engel2016monodataset} 使用一个闭环的运动，相机运动的开始和结束在同一个位置，被测试算法只需要比较开始和最终状态下的位姿就可以计算出整个算法的漂移的大小。Engel 等\cite{engel2016monodataset} 给出了一种统一计算尺度误差、位置、姿态的误差的方法。该方法首先通过最小化测量结果和实际值之间的位姿，计算出初始时刻位姿$\mathbf{T}_s$ 和结束时刻位姿$\mathbf{T}_e$。然后计算两者之间的漂移$\mathbf{T}_{e,s}=(\mathbf{T}_e)^{-1}\mathbf{T}_s$。 为了避免分别计算尺度、位置和旋转的漂移，文章定义了对齐误差。%这种误差均衡的考虑了由尺度、位置和旋转引起的误差
+\begin{equation}
+e_a=\sqrt{\frac{1}{n}\sum^n_{i=1}\|\mathbf{T}_s\mathbf{p}_i-\mathbf{T}_e\mathbf{p}_i\|^2}
+\end{equation}
+这种测量方式可以应用于具有不同的观测方式的定位系统，被评估的系统可以是双目系统也可以是VIO系统，对于尺度、位置、旋转的误差影响是均衡的。
+
+另外一种难于验证的情形是相对位姿的验证，Burgar等\cite{burgard2009comparison,kummerle2009measuring} 提出了一种基于图模型的相对位姿计算方法。但是该方法是基于二维空间中三自由度的运动，我们将之拓展至三维空间6自由度的运动。两个位姿之间的相对误差为
+\begin{equation}
+\varepsilon(\delta)=\frac{1}{n}\sum_{i,j}(\delta_{i,j}\ominus\delta^*_{i,j})^2
+\end{equation}
+这里$\ominus$表示标准运动组合算子$\oplus$的逆算子。我们假设对于一个$SE$(3)量的扰动量$\Delta\mathbf{T}$，对应的李代数表示为$\delta\boldsymbol{\xi}=[\delta\boldsymbol{\rho},\delta\boldsymbol{\phi}]$，一个原始的姿态$\mathbf{T}_1=[\mathbf{R}_1,\mathbf{P}_1]$，扰动之后的姿态为
+\begin{equation}
+\mathbf{T}_2=\mathbf{T}_1\oplus\Delta\mathbf{T}=\begin{bmatrix}
+\mathbf{R}_1\exp(\delta\boldsymbol{\rho}^\wedge) & \mathbf{P}_1+\delta\boldsymbol{\phi}
+\end{bmatrix}
+\end{equation}
+这里$\exp(*^\wedge)$表示$\mathfrak{so}(3)$李代数计算出反对称矩阵，然后进行指数变换。$\Delta\mathbf{T}=\mathbf{T}_2\ominus\mathbf{T}_1$，因此
+\begin{equation}
+\begin{split}
+\delta_{i,j}\ominus\delta^*_{i,j}=\|\delta\boldsymbol{\rho}\|_2+&\|\delta\boldsymbol{\phi}\|_2=\\\|\log\left((\mathbf{R}^{-1}_1\mathbf{R}_2)^\vee\right)\|_2+&\|\mathbf{P}_2-\mathbf{P}_1\|
+\end{split}
+\end{equation}
+
+%在算法比较过程中，应该控制变量，例如为了比较一个SLAM和另外一个VO系统之间的性能，应该关闭该SLAM 的闭环功能，然后进行比较。
+
+\subsection{开源库及相关工具}\label{subsect:common-lib-models}
+
+视觉方面，ORB、BRISK等特征描述子，LK光流法\cite{lucas1981iterative}等在OpenCV\cite{itseez2015opencv}均有实现。另外一个重要的问题是相机以及IMU 的标定问题，相机的标定中对于针孔相机，OpenCV Calib以及Matlab相机标定工具箱使用了标准的模型。Kalibr\cite{furgale2013unified}是一个工具箱，它能够标定多目相机系统、相机IMU相对位姿以及卷帘快门相机。常用的SFM工具有Bundler\cite{snavely2006photo}、OpenMVG\cite{openMVG}及MATLAB多视几何工具箱\cite{capel2006matlab}等。Bunlder增量式的处理一组图像，提取其中的特征点进行匹配，完成三维重建并输出一个稀疏的场景结构。OpenMVG 则偏重于多视几何问题的求解。
+%ROS中集成的rviz以及Pangolin可以用来显示三维点云、相机的位姿、运动轨迹，构造urdf模型，rviz可以显示机器人的结构，控制机器人的运动。Pangolin在显示按钮、滑动条、复选框等控制系统的动态参数，对应的在ROS中使用reconfig可完成动态参数设置。
+
+优化方面，Sophus库为三维空间的刚体变换及李群李代数一个C++的实现。Eigen为线性代数和（稀疏）矩阵的实现，对LAPACK实现了C++的封装。g2o \cite{kummerle2011g} 是一个针对非线性最小二乘优化问题的C++代码实现。VO问题可以使用图表示，g2o把非线性最小二乘问题表示为一个图或者超图，图的边可以连接多个节点，一个超图是图的拓展问题，其他的优化实现还包括ceres\cite{ceres-solver}、GTSAM\cite{dellaert2012factor}、iSAM\cite{kaess2008isam}、SLAM++\cite{polok2013incremental} （注：这里的SLAM++ 不同文献SLAM++\cite{salas2013slam++}，前者是一个非线性优化方法，后者对应一种语义SLAM系统）。如表\ref{tab:open lib and tools} 所示，常用的优化开源库及其使用场合。
+
+\begin{table*}[t]
+\centering\small
+\caption{视觉定位系统工具库}\label{tab:open lib and tools}
+\begin{tabular}{c c}
+\toprule[1.5pt]
+分类 & 算法库\\
+\midrule[1pt]
+优化&Eigen, g2o\cite{kummerle2011g}, ceres\cite{ceres-solver}, GTSAM\cite{dellaert2012factor}, iSAM\cite{kaess2008isam}, SLAM++\cite{polok2013incremental}  \\
+空间变换 &Eigen, ROS TF, OpenCV Transform, Sophus \\
+标定 & OpenCV Calib, Kalibr, MATLAB Calibration Toolbox \\
+%&MRTP &移动机器人开发包\\
+特征&OpenCV Feature, VLFeat\cite{vedaldi08vlfeat}  \\
+可视化&PCL Visialization, Pangolin, rviz \\
+SFM& Bundler\cite{snavely2006photo}, opencvMVG\cite{openMVG}，多视几何MATLAB工具箱\cite{capel2006matlab}\\
+\bottomrule[1.5pt]
+\end{tabular}
+\end{table*}
+%\begin{equation}
+%\label{g2o-objection-func}
+%\arg\min_{\mathbf{x}^*} \mathbf{F}(\mathbf{x})=\arg\min_{\mathbf{x}^*}\sum_{k\in\mathcal{C}}\mathbf{e}_k(\mathbf{x}_k,\mathbf{z}_k)^T\boldsymbol{\Omega}_k\mathbf{e}_k(\mathbf{x}_k,\mathbf{z}_k)
+%\end{equation}
+%$\mathbf{x}^*$为优化对象，$\mathbf{z}_k$和$\boldsymbol{\Omega}_k$为涉及参数$\mathbf{x}$的约束的均值和信息矩阵。如果已知\eqref{eq:graph-map}的迭代初始值，使用流行的高斯牛顿或者LM方法可以得到上述最优问题数值解。
+%%系统的信息矩阵使用\
+%g2o通用图优化库运行多种线性求解器，如CHOLMOD\cite{davis2006direct}，CSparse和PCG\cite{jeong2012pushing}等。
+\subsection{验证数据集}\label{subsubsect:datasret-for-validation}
+大规模数据的存在使得深度网络在各种视觉任务中达到较好的效果，同样在机器人的定位技术发展的同时产生多种可用的数据集。这些数据使得研究者没有机器人硬件平台的情况下仍然可以开发出可以实际应用的方法。我们从数据集的发布时间，数据的类型，相机的类型，真值的来源等等介绍几个VO 系统中常用的验证数据集，如表\ref{tab:vo dataset} 所示。
+
+%最近的工作显示使用大规模数据训练光流估计得到一个卷积网络作为一个可监督学习任务是可行的。这样的网络叫做FlowNet，这样的网络来自于一个合成产生的数据集。
+
+\begin{table*}[t]\centering\small
+  \caption{VO系统常用验证数据集}
+  \label{tab:vo dataset}
+  \begin{minipage}[t]{\textwidth}
+	 \centering
+  \begin{tabular}{c c c c c c c c c}
+     \toprule[1.5pt]
+    名称 & 发布时间  & 数据类型& 相机类型 & 真值来源 & 传感器  & 文献\\
+    \midrule[1pt]
+    KITTI VO & 2012 &png& 双目 & GPS & 激光 &\cite{Geiger2012CVPR}\\
+    TUM-Monocular & 2012  &jpg &单目& 无 & 否 &\cite{engel2016monodataset}\\
+    TUM-RGBD &  2012 &png+d &RGBD & 无 & 否 &\cite{sturm12iros}\\
+    ICL NUM & 2014 & png &双目 & $^{4}$ & 无&\cite{handa:etal:ICRA2014}\\
+    EuRoC MAV& 2016  & ROS$^{1}$+ASL$^{2}$ & 双目 & VICON$^{3}$ & IMU &\cite{Burri25012016}\\
+    Scene Flow & 2016 & png & 双目& $^{4}$ & 无 & \cite{MIFDB16} \\
+    COLD$^{5}$ & 2009&JPEG&全向$^{6}$& 无&激光$^{7}$&\cite{pronobis2009ijrr}\\
+    NYU depth&2011/2012&png+d&RGBD&无&无&\cite{SilbermanECCV12,silberman11indoor}\\
+    PACAL 3D+ & 2014 & JPEG & 单目 &$^{4}$ & 无 &  \cite{xiang_wacv14}\\
+    \bottomrule[1.5pt]
+  \end{tabular}
+
+  \raggedright
+  \footnotesize
+  [1]. ROS中使用的一种bag记录文件，使用ROS可以广播文件中的数据为消息。
+
+  [2]. ASL为该数据集自定义格式。
+
+  [3]. 除了使用VICON另外还有Laser tracker以及3D structure Scan，具体为Vicon motion capture system (6D pose)，Leica MS50 laser tracker (3D position)，Leica MS50 3D structure scan。
+
+  [4]. 合成数据集，存在真值。
+
+  [5]. 这里有一个COLD数据的拓展数据集详细参见http://www.pronobis.pro/data/cold-stockholm
+
+  [6]. 系统配备了普通的相机以及全向相机（Omnidirectional Camera）。
+
+  [7]. 除了激光雷达，还有一个轮式里程计（码盘）。
+  \end{minipage}
+\end{table*}
+
+这些数据集具有不同的特点，COLD数据集收集来自不同{光照条件下（白天、晚上、多云）的图像}。该数据包含了室内的一些常见物体的图像，一些语义地图方法使用它作为验证数据集，验证语义建图方法的效果。ICL NUM数据规模适于训练深度网络，完成图像的匹配，图像的光流计算等。%在训练深度网络的数据中，KITTI2012 和KITTI2015也被广泛使用，详细请参考http://www.cvlibs.net/datasets/kitti/eval\_stereo.php。
+\section{未来发展方向}\label{sect:future of vo}
+综上所述，移动机器人的视觉方法仍然存在多种方面的问题，鲁棒性方面问题主要集中在如何完成图像的配准以及系统初始化、卷帘快门等问题，效率方面主要集中在如何实时的完成稠密、半稠密重建、图像点的选择、如何进行边缘化等问题。
+
+随着深度学习在物体检测、语义分割、物体跟踪等方向的发展，环境中语义、环境理解更多的与视觉定位相结合提高视觉定位的鲁棒性，并建立更精简的地图。另外，嵌入式VO系统以及组合定位也将成为视觉定位系统的发展方向。
+%\subsection{特征点选择}
+%早期的VO方法更多的依赖不变性特征的检测以及匹配，对于特征缺失、图像模糊以及纹理不丰富的场景容易失效。直接法避免了这种依赖，但是稠密或半稠密的直接跟踪会引入很大的计算量, 若要运行在计算性能较低的移动设备上, 就需要将图像降采样, 这样会降低跟踪精度，另外一方面图像中点的对于完成点的跟踪及定位来说过剩的，使用更多的点对于提高系统的精度和鲁棒性没有显著的帮助，但会显著的增加系统的消耗时间，DSO因此使用一个利用均匀采样的点选择策略，除了在梯度较大的区域，还包括纹理、边缘较弱的区域，实验发现图像中那些没有显著梯度的区域使用其中的弱梯度的点对于提高系统鲁棒性有帮助。SVO 对稀疏的特征点进行跟踪，利用特征周围的点进行块匹配，可以达到较高的效率。
+
+
+\subsection{嵌入式系统}
+
+随着移动处理的发展，嵌入式系统的性能变得更加接近PC，但是计算能力仍然比较弱。而移动机器人、无人机等常常使用嵌入式系统作为视觉处理系统。使用SIMD（Single Instruction Multiple Data）指令可对3D 重建以及后端的优化进行加速。除了SIMD，另外一种加速方法是使用GPU。早期的VO 方法只能进行实时稀疏的三维点云重建，GPU的使用使得单目视觉能够实时完成稠密重建。嵌入式系统的GPU和CPU共享RAM 存储器，不需要像PC机那样消耗很长的时间完成数据在CPU和GPU之间的交换。Jetson TK1，TX1/2\cite{nikolskiy2016efficiency}使得开发者可以在嵌入式系统中使用GPU，便于在无人机、移动机器人对功耗、载重等要求严格的系统完成视觉定位算法。Pizzoli\cite{pizzoli2014remode} 等对深度图建立深度滤波器，使用正则化方法，利用GPU 实时完成稠密三维点云重建。DTAM\cite{newcombe2011dtam} 使用GPU针对特征缺失和图像模糊等情况下实现稳定的跟踪。
+
+
+%随着移动处理的发展，嵌入式系统的性能变得更加接近PC，但是计算能力仍然比较弱。而移动机器人、无人机等常常使用嵌入式系统作为视觉处理系统。SVO\cite{faessler2016autonomous}运行于Odroid U3配合IMU 可以为450g的MAV（Micro Aerial Vehicle）完成导航，Sch{\"o}ps 等\cite{schops2014semi}将LSD SLAM 移植到手机上，使用NEON 指令（ARM 中SIMD（Single Instruction Multiple Data）指令）进行加速，完成半稠密深度重建。DSO 使用SSE2（x86 中的SIMD指令）对加速后端的BA优化。
+%
+%除了SIMD，另外一种加速方法是使用GPU，早期的VO方法只能进行实时稀疏的三维点云重建，GPU的使用使得单目相机实时完成稠密重建变得可行。在嵌入式系统中，Jetson TK1，TX1/2\cite{nikolskiy2016efficiency}使得开发者可以在嵌入式系统中使用GPU，便于在无人机、移动机器人等功耗载重等要求严格的地方完成视觉定位算法。Pizzoli\cite{pizzoli2014remode}等对深度图建立深度滤波器，使用正则化方法，利用GPU实时完成的稠密三维点云重建。DTAM\cite{newcombe2011dtam} 使用GPU针对特征缺失和图像模糊等情况下仍能稳定进行跟踪，实现AR 应用中的虚拟物体与场景发生物理碰撞。
+
+%Tanskanen等\cite{tanskanen2013live,kolev2014turning,ondruvska2015mobilefusion,pradeep2013monofusion} 在手机上利用GPU完成稠密的三维点云重建，系统首先跟踪图像序列，估计当前相机的位姿，然后在滑动窗口中保存最近的若干关键帧，然后立体匹配恢复深度图。其中Tanskanen等\cite{tanskanen2013live,kolev2014turning}利用IMU估计物体度量尺度，以及预测位姿。
+%另外newcombe等使用RGBD相机\cite{newcombe2011kinectfusion,whelan2016elasticfusion} 基于TSDF（Truncated Signed Distance Function）完成三维场景的稠密重建。使用单目系统移动的灵活性使得单目系统完成三维重建在AR等移动场景更加实用。
+%语义分析
+%在VO系统进行定位建图的同时可以使用GPU完成图像中物体的检测和区域分割，使用深度网络的使用显著提高了 物体检测和区域分割的性能，详细参见文章\ref{subsect:semantic}。%但GPU的使用仍然存在一些问题，如GPU 的功耗，GPU与CPU之间的通信延迟较大等问题。
+\subsection{组合定位}\label{sect:VIO}
+%本节要介绍关于视觉惯性里程计的常用方法OkVIS\cite{leutenegger2015keyframe}，MSCKF\cite{mourikis2007multi}， VI-direct SLAM\cite{concha2016visual}等等，他们之间的异同点，效果如何。介绍IMU数据在该组合定位方法中作用和不同使用方法之间的优缺点。介绍非线性优化中边缘的具体步骤和具体实现方法。介绍
+
+由于单一定位方法难以满足机器人对定位精度的要求，所以组合定位方式技术\cite{faessler2016autonomous} 应运而生。一种组合定位方式是以INS为主，引入另一种辅助定位方式以修正惯性测量数据的累积误差\cite{weiss2012versatile}，如GPS、视觉定位等。另一种组合定位方式以视觉定位为主，配合GPS、INS等，改善定位精度和鲁棒性。第一种方式实时性好，较常见于无人机系统。第二种方式信息量丰富，抗干扰能力强，在移动机器人系统中较常采用。
+
+%单一的视觉定位的结果存在噪声大，不够鲁棒，难以处理失败的情况、更新频率低及延迟时间大等缺点。另外单目视觉中存在的尺度模糊问题，在增加IMU的信息之后则有望解决这个问题。IMU由于其体积重量优势广泛用于机器人控制系统，但是低成本的IMU传感器由于其漂移特性，难以长时间的输出低误差测量结果，因此需要一个实际的位置测量来修正，这样可以使用视觉定位构成视觉惯性定位系统。
+
+%视觉惯性定位系统按照被优化位姿的数量可以分为三类，分别是滤波器方法（一个，最新位姿），滑动窗口平滑（固定数量）和全平滑（全部位姿）。按照测量误差的表示方式有两种，一种使用协方差矩阵，如EKF，另外一种使用信息矩阵，如信息滤波器。按照测量模型的线性化次数有两种，线性化一次的系统是标准EKF，另外是线性化多次的系统，如平滑法。
+%\subsubsection{数据融合}
+视觉信息和IMU数据融合在数据交互的方式上主要可以分为两种方式，松耦合\cite{weiss2012versatile,weiss2011real,lynen2013robust} 和紧耦合\cite{shen2015tightly,yang2016monocular}。松耦合的方法采用独立的惯性定位模块和定位导航模块，两个模块更新频率不一致，模块之间存在一定的信息交换。在松耦合方式中以惯性数据为核心，视觉测量数据修正惯性测量数据的累积误差。松耦合方法中视觉定位方法作为一个黑盒模块，由于不考虑IMU信息的辅助，因此在视觉定位困难的地方不够鲁棒，另外该方法无法纠正视觉测量引入的漂移。
+
+紧耦合方式使用IMU完成视觉VO中的运动估计，IMU 在图像帧间的积分的误差比较小，IMU的数据可用于预测帧间运动，加速完成点匹配，完成VO位姿估计。相对于松耦合，紧耦合的另外一个优点是IMU的尺度度量信息可以用于辅助视觉中的尺度的估计。%另外按照数据耦合方式分为两种，紧耦合方法和松耦合方法，这里首先介绍这两者之间的异同。
+
+%在{文献}\ref{subsect:initialization in vo system}中我们介绍VO/SLAM的初始化中的设计技巧，那么在VIO/VI SLAM同样存在初始化的问题，该问题以及对应的解决方法，我们这里简要介绍。由于机器人系统资源的限制，模型中待优化的数量如果不加以限制，那么系统运行一段时间后难维持其实时性，因此我们这里讨论关于如何控制优化规模的方法。线性化误差会导致系统的不一致性，最后我们介绍解决不一致性的几种方法。
+%\subsection{优化规模控制}\label{subsect:optimzation-scale-limitation}
+%由于机器人系统资源的限制，模型中待优化的数量如果不加以限制，那么系统运行一段时间后难以维持其实时性。
+%滤波器方法仅保留最新的{若干}状态提高系统的效率。在运动中，被估计的路标点会快速增长，因此系统只跟踪少量的路标点来确保实时性要求。MSCKF\cite{mourikis2007multi} 维护了多个状态，使用边缘化方法丢弃超过数量的早期状态，使用随机复制\cite{roumeliotis2002stochastic}在状态变量中维护以前的位姿。MSCKF的缺点是一个路标点所有的测量到齐之后才能开始处理，滤波器无法使用全部视觉信息导致精度下降。MSCKF的误差包括边缘化误差、线性化误差。线性化误差引入了估计的漂移以及估计器的不一致性，导致非最优化的融合。通过一致性分析可得，全局3D位置以及偏航角度是不可观测的。%对于不一致性的解决方法我们会\ref{subsect:estimator-inconsistency}在中详细讨论。
+%
+%滑动窗口平滑方法\cite{dong2011motion,leutenegger2015keyframe} 中被优化的位姿落在给定时间间隔的窗口中，旧状态被丢弃。然而直接丢弃会给优化系统带来误差。该误差主要原因是由于直接丢弃破坏了优化系统的网络结构，而对剩余的节点及连接没有做任何调整。因此一般使用边缘化方法在丢弃状态的时候同时调整保留的网络结构使得优化结果不变。同MSCKF一样，滑动窗口平滑同样存在边缘化误差、线性化误差以及不一致性问题。另外对于运动速度较慢的系统，滑动窗口中的状态十分接近，在单目中十分不利于尺度估计，因此Shen等\cite{shen2015tightly,yang2016monocular}使用两种边缘化方式，在系统运动速度较快时丢弃旧的的状态，在运动速度较慢的时候丢弃上一个无用的状态，保持足够视差维持路标点的三角测量的精度。
+%
+%全平滑方法估计运动轨迹中的所有状态。随着轨迹及地图规模的增大，在实时性范围下优化对应的非线性问题变得困难。因此Leutenegger 等\cite{leutenegger2015keyframe,patron2015spline} 使用选择部分关键帧方法，另外一个方法是使用iSAM\cite{kaess2012isam2,kaess2008isam}（incremental Smoothing And Mapping ）方法，iSAM将因子图稀疏化表示，更新影响新测量的状态子集。
+\subsection{语义分析与深度学习}
+语义分析以及深度学习网络在视觉定位中的作用越来越重要。在未来发展中语义分析与视觉定位的结合可能表现有以下几种形式：通过语义分割完成图像的区域分割，物体检测结果和图像区域的分割结果建立新的约束实现相机更加精确的定位。另外可以通过对重建的三维点云分割建立更加紧凑的语义地图，降低对空间资源的需求。
+
+通过深度卷积网络的特征提取有望取代手工设计的特征提取和匹配，通过离线或在线的训练，定位系统利用的特征更加贴近应用场景，提高在相应的应用场景下的鲁棒性和定位精度。通过RNN网络在未来有望取代视觉里程计的帧间数据关联，通过LSTM等网络的记忆特性，使得深度网络更加方便的处理图像帧序列并保存其中的历史信息。通过深度网络的端到端的训练实现场景识别，有望实现大规模的建图，消除定位过程的累计误差。
+
+\section{总结}
+本文首先简述了定位问题，对定位问题进行建模，按照数据关联方式分类介绍了几种常用的VO 系统。然后本文围绕鲁棒性展开介绍几个方面的VO 系统的特点，这些方面从不同程度上影响了系统的鲁棒性。然后本文介绍了语义分析在视觉定位中作用以及如何使用深度网络进行视觉定位。本文最后介绍了性能评价的方法，相关的开源库开源工具，以及验证数据集。
+
+在过去的多年里视觉定位系统存在许多进步，无论是早期的基于特征方法，还是采用光度值匹配的直接法都得到了较快的发展。稀疏矩阵及相关的优化工具使得VO系统可以使用图优化方法代替滤波器方法，显著提升精度的同时保持实时性。视觉系统的研究已经取得很多进展，但是系统的鲁棒性和资源消耗等方面还存在需要提高的地方。例如，应对成像模型尤其是卷帘快门相机的建模方法、控制优化规模同时不损失过多的精度、尺度漂移等，虽然存在一些解决方法，也能够在一定程度上提高系统的性能，但仍存在提升的空间。
+
+深度学习在场景识别中的进展，为我们提供了许多使用深度学习网络完成定位的思路。语义分析与视觉定位的结合、深度学习应用于视觉定位、嵌入式视觉定位系统以及组合定位等都是未来定位以及视觉定位系统的重要发展方向，这些方向有望在进一步提升系统鲁棒性的同时降低所需的计算资源。
+
+%{这里增加一些关于展望方面的内容。}
+%\begin{enumerate}
+%\item 深度学习
+%\item 三维重建
+%\item IMU
+%\end{enumerate}
+%\subsection{组合定位}
+%组合定位方法的性能表现为以下几个方面，精度，频率，延时特性，传感器同步和时间戳精度，延时的测量和乱序的测量，估计器的初始化和传感器的预校准，测量模型的误差，对干扰点的鲁棒性和计算效率等。这些指标也是制约视觉惯性定位系统的问题，解决这些问题直观重要。
+% \begin{enumerate}
+% \item 设计结构跟随应用场景
+% \item 历史信息有助于当前的定位
+% \item 场景理解有利于提高测量精度
+% \item 信息的综合利用有利于提高鲁棒性
+% \item 可用资源指导优化强度
+% \item 稀疏性求解大规模优化问题
+% \end{enumerate}
+% \subsection{发展趋势}
+% \begin{enumerate}
+% \item 从有标志转到无标志
+% \item 从使用3D模型到使用序列数据
+% \item 从双目到单目
+% \item 从单一定位到组合定位
+% \end{enumerate}
+{\footnotesize
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,ref1}
+}
+
+
+\end{document}
